@@ -2,7 +2,6 @@
 import React from 'react';
 import { useState } from 'react';
 import { useRouter } from "next/navigation";
-import LogReg from '../Login/LogReg';
 
 export default function Navbar({homePage}){
     //TODO  each item on the drop down will change the sites theme. Will use localstorage for the current theme.
