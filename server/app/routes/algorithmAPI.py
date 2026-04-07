@@ -10,6 +10,7 @@ def get_bubble():
     test = bubble_sort(arr)
     return test
 
+
 array_bp = Blueprint("array", __name__)
 
 ARRAY_TYPES = {
