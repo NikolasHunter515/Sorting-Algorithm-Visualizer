@@ -1,4 +1,4 @@
-import Navbar from "../../../components/navbar/Navbar";
+import Navbar from "../../../components/server/client/navbar/Navbar";
 import Auth from "../../../components/Login/Auth";
 import "./auth.css";
 
