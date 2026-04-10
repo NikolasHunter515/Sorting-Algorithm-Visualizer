@@ -6,6 +6,16 @@
   --millia: #FAE8D4;
 }
 
+.desc-btn{
+  background-color: var(--millia) !important;
+}
+
+.desc-content{
+  background-color: var(--millia);
+
+}
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
