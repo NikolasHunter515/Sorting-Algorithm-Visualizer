@@ -9,7 +9,8 @@ import SelectCase from "../../components/server/client/runtimeSelection/SelectCa
 import SetInputSize from "../../components/server/client/inputSize/SetInputSize";
 import Controls from "../../components/server/client/stepControls/Controls";
 import HistoryTab from "../../components/server/client/history/HistoryTab";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import GetArray from "../../components/server/utils/GetArray";
 
 
 export default function Home() {
@@ -18,12 +19,22 @@ export default function Home() {
   const [algoName, setAlgoName] = useState("quicksort");
   const [description, setDescription] = useState("Select an algorithm for a description");
   const [inputSize, setInputSize] = useState(10); // max size should be 100 for now.
-  const [runtimeCase, setRuntimeCase] = useState(2); // 1: sorted, 2: random, 3: reserse sorted
+  const [runtimeCase, setRuntimeCase] = useState("random"); // 1: sorted, 2: random, 3: reserse sorted
   const [showSort, setShowSort] = useState(true);
   const [play, setPlay] = useState(false);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect (() => {
+    const fetchData = async () => {
+      const data = await GetArray(runtimeCase, inputSize);
+      console.log(data);
+      setChartData(data);
+    };
+    fetchData();
+  }, [inputSize, runtimeCase]);
+  //setChartData(GetArray(runtimeCase, inputSize))
 
   //appears that only the uv value matters meaning will use that to display the data
-  //wonder what the other fields do and if custom fields could be added.
   const dta = [
   {
     uv: 1,
@@ -70,9 +81,9 @@ export default function Home() {
           <HistoryTab />
           </div>
         <div className="col-5">
-          <ChartRender data={dta}/>
+          <ChartRender data={chartData}/>
           <div className="col">
-            <SelectCase setRuntimeCase={setRuntimeCase} setShowSort={setShowSort}/>
+            <SelectCase setRuntimeCase={setRuntimeCase} setShowSort={setShowSort} inputSize={inputSize} setChartData={setChartData}/>
           </div>
           <div className="col">
               <div className="row">
