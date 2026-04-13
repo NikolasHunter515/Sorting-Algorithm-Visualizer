@@ -12,9 +12,9 @@ export default function SelectCase({setRuntimeCase, setShowSort, inputSize, setC
         setRuntimeCase(selection);
         setShowSort(false); //may addadition setting to toggle this later.
 
-        const res = await GetArray(selection, inputSize);
+        //const res = await GetArray(selection, inputSize);
         
-        setChartData(res);
+        //setChartData(res);
     }
 
     return(
