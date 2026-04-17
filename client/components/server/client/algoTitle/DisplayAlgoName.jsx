@@ -1,6 +1,7 @@
 'use client';
 
 export default function DisplayAlgoName({name}){
+    //add map here 
 
     return(
         <div>
