@@ -1,4 +1,4 @@
-'use state';
+'use client';
 import { useState } from 'react';
 
 export default function SelectAlgo({ setAlgoName }){
@@ -6,7 +6,7 @@ export default function SelectAlgo({ setAlgoName }){
 
     function selection(name){
         setAlgoName(name);
-        console.log(setAlgoName);
+        //console.log(setAlgoName);
     }
 
     //make simple dropdown here, use loop too.
