@@ -11,28 +11,39 @@ import Controls from "../../components/server/client/stepControls/Controls";
 import HistoryTab from "../../components/server/client/history/HistoryTab";
 import { useState, useEffect } from 'react';
 import GetArray from "../../components/server/utils/GetArray";
+import GetSteps from "../../components/server/utils/GetSteps";
 
 
 export default function Home() {
   //const [arr, setArr] = useState([1,4,5,6]);
   const arr = [1,4,5,6];
-  const [algoName, setAlgoName] = useState("quicksort");
+  const [algoName, setAlgoName] = useState("Quicksort");
   const [description, setDescription] = useState("Select an algorithm for a description");
   const [inputSize, setInputSize] = useState(10); // max size should be 100 for now.
   const [runtimeCase, setRuntimeCase] = useState("random"); // 1: sorted, 2: random, 3: reserse sorted
   const [showSort, setShowSort] = useState(true);
   const [play, setPlay] = useState(false);
   const [chartData, setChartData] = useState([]);
+  const [steps, setSteps] = useState([]);
 
-  useEffect (() => {
+  //does handle change, except when random is clicked ideally it should generate again.
+  useEffect (() => { // when this is changed the new array should also be sent to the backend.
     const fetchData = async () => {
       const data = await GetArray(runtimeCase, inputSize);
       console.log(data);
-      setChartData(data);
+      setChartData(data);// should only update if inputsize has changed and is not null.
+
+      //when calling consider putting in try block to display error to user.
+      //should the user see the error or since they have no control over what is sent they cannot make any changes.
+      //await GetSteps("Bubble sort");// works here need to test in play controls next.
     };
     fetchData();
-  }, [inputSize, runtimeCase]);
-  //setChartData(GetArray(runtimeCase, inputSize))
+  }, [inputSize, runtimeCase]);// is a or condition here, meaning would need to put code in an if statement to have finer control over when it executes.
+
+  /*useEffect(() => {
+    const step = steps[0];
+    console.log(`got steps: ${step}`);
+  }, [steps]);*/
 
   //appears that only the uv value matters meaning will use that to display the data
   const dta = [
@@ -50,6 +61,7 @@ export default function Home() {
   },
   {
     uv: 2,
+    fill: "#1F77b4",
   },
   {
     uv: 4,
@@ -61,6 +73,7 @@ export default function Home() {
     uv: 4,
   },
 ];
+
 
   return (
     <div className="page">
@@ -91,7 +104,7 @@ export default function Home() {
                   <SetInputSize inputSize={inputSize} setInputSize={setInputSize} />
                 </div>
                 <div className="col">
-                  <Controls play={play} setPlay={setPlay} inputSize={inputSize} runtimeCase={runtimeCase} setShowSort={setShowSort} />
+                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName}/>
                 </div>
               </div>
           </div>
