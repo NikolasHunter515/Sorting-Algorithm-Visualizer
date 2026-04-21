@@ -12,6 +12,11 @@ function highlight(data, index){
     return data;
 }
 
+function replace(data, index, value){
+    data[index].uv = value;
+    return data;
+}
+
 export default function handleSteps(step, data){
     let tempDta = data.map(item => ({ ...item }));
     //tempDta[1].uv = 90;
@@ -24,6 +29,9 @@ export default function handleSteps(step, data){
             return tempDta;
         case "swap":
             tempDta = swap(tempDta, step.indices[0], step.indices[1]);
+            return tempDta;
+        case "replace":
+            tempDta = replace(tempDta, step.index, step.value);
             return tempDta;
         case "stop":
             return null;
