@@ -1,129 +1,135 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
-
+import React, { useState } from 'react';
+ import { supabase } from "../../lib/supabase";
 export default function Auth(){
-    const [isOpen, setIsOpen] = useState(false);
-    const toggleDropdown = () => setIsOpen((v) => !v);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordVerify, setPasswordVerify] = useState('');
-    const [logReg, setLogReg] = useState(false); // false -> login, true register
-    //TODO add second ps field for register.
+    const [logReg, setLogReg] = useState(false);
 
-    const log = () =>{
-        setLogReg(false);
-    }
+    const log = () => setLogReg(false);
+    const reg = () => setLogReg(true);
 
-    const reg = () =>{
-        setLogReg(true);
-    }
-
-    //on succesful login or register should navigate back to the main page.
+    // ✅ LOGIN
     async function handleLogin(e){
         e.preventDefault();
 
         try{
-            //add auth conneciotn to backend.
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if(error){
+                console.log("Login Error:", error.message);
+            } else {
+                console.log("Login Success:", data);
+
+                // 🔥 access token (IMPORTANT)
+                const token = data.session.access_token;
+                console.log("Access Token:", token);
+            }
         }
         catch(err){
             console.error("Network Error:", err);
         }
     }
 
-    async function handleRegister(e) {
+    // ✅ REGISTER
+    async function handleRegister(e){
         e.preventDefault();
 
         try{
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password
+            });
 
+            if(error){
+                console.log("Register Error:", error.message);
+            } else {
+                console.log("Register Success:", data);
+
+                const token = data.session?.access_token;
+                console.log("Access Token:", token);
+            }
         }
-        catch(e){
+        catch(err){
             console.error("Network Error:", err);
         }
     }
-    
-    return(
-        <div>
-            <div className="container mt-3">
-                <div className="mt-4 p-5 text-white center-content">
-                   <div className='row justify-content-center control-head'>
-                        <div className='col-auto'>
-                            <a className='btn' onClick={log}><h1>Login</h1></a>
-                            <a className='btn' onClick={reg}><h1>Register</h1></a>
-                        </div>
-                   </div>
-                   
-                   {logReg == false &&
-                   <form onSubmit={handleLogin}>
-                        <div className='row'>
-                            <label className='form-label'>Username</label>
-                            <input 
-                            type='email'
-                            id='uName'
-                            placeholder='Enter email'
-                            className='form-control input-background'
-                            value={email}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            />
-                        </div>
-                        <br />
-                        <div className='row'>
-                            <label className='form-label'>Password</label>
-                            <input 
-                            type='password'
-                            id='pw'
-                            placeholder='Enter password'
-                            className='form-control input-background'
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            />
-                        </div>
-                        <br />
-                        <div className='row justify-content-center'>
-                            <div className='col-auto'>
-                                <button type='submit' className='btn rounded-pill submit-info'>Login</button>
-                            </div>
-                        </div>
-                    </form> 
-                    }
 
-                    {logReg == true &&
-                        <form onSubmit={handleRegister}>
-                            <div className='row'>
-                                <label className='form-label'>Username</label>
-                                <input 
-                                type='email'
-                                id='uName'
-                                placeholder='Enter email'
-                                className='form-control input-background'
-                                value={email}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                                />
-                            </div>
-                            <br />
-                            <div className='row'>
-                                <label className='form-label'>Password</label>
-                                <input 
-                                type='password'
-                                id='pw'
-                                placeholder='Enter password'
-                                className='form-control input-background'
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                />
-                            </div>
-                            <br />
-                            <div className='row justify-content-center'>
-                                <div className='col-auto'>
-                                    <button type='submit' className='btn rounded-pill submit-info'>Register</button>
-                                </div>
-                            </div>
-                    </form>
-                    }
+    return(
+        <div className="container mt-3">
+            <div className="mt-4 p-5 text-white center-content">
+
+                <div className='row justify-content-center control-head'>
+                    <div className='col-auto'>
+                        <button className='btn' onClick={log}><h1>Login</h1></button>
+                        <button className='btn' onClick={reg}><h1>Register</h1></button>
+                    </div>
                 </div>
+
+                {!logReg && (
+                    <form onSubmit={handleLogin}>
+                        <div className='row'>
+                            <label>Email</label>
+                            <input 
+                                type='email'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className='form-control'
+                                required
+                            />
+                        </div>
+
+                        <div className='row mt-2'>
+                            <label>Password</label>
+                            <input 
+                                type='password'
+                                value={password}   // ✅ added
+                                onChange={(e) => setPassword(e.target.value)}
+                                className='form-control'
+                                required
+                            />
+                        </div>
+
+                        <div className='text-center mt-3'>
+                            <button type='submit' className='btn'>Login</button>
+                        </div>
+                    </form>
+                )}
+
+                {logReg && (
+                    <form onSubmit={handleRegister}>
+                        <div className='row'>
+                            <label>Email</label>
+                            <input 
+                                type='email'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className='form-control'
+                                required
+                            />
+                        </div>
+
+                        <div className='row mt-2'>
+                            <label>Password</label>
+                            <input 
+                                type='password'
+                                value={password}   // ✅ added
+                                onChange={(e) => setPassword(e.target.value)}
+                                className='form-control'
+                                required
+                            />
+                        </div>
+
+                        <div className='text-center mt-3'>
+                            <button type='submit' className='btn'>Register</button>
+                        </div>
+                    </form>
+                )}
+
             </div>
         </div>
     );
