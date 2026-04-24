@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from logic.algorithms import *
 from logic.arrayGenerator import *
-
+ 
 # global array variable that will then be sorted
 # loads one upon entering homepage
 # this variable gets updated every time a new array is generated

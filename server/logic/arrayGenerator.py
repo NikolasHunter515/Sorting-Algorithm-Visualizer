@@ -1,5 +1,5 @@
 import random
-
+ 
 class ArrayGenerator:
     def __init__(self):
         return
