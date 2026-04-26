@@ -2,9 +2,7 @@ from flask import Blueprint, jsonify, request
 from logic.algorithms import *
 from logic.arrayGenerator import *
 
-# global array variable that will then be sorted
-# loads one upon entering homepage
-# this variable gets updated every time a new array is generated
+# Global array (for demo purposes)
 CURRENT_ARRAY = []
 
 ARRAY_TYPES = {
@@ -26,29 +24,38 @@ ALGORITHMS = {
 algorithm_bp = Blueprint("algorithm", __name__)
 array_bp = Blueprint("array", __name__)
 
+# =========================
+# ALGORITHM ROUTE
+# =========================
 @algorithm_bp.route("/", methods=["GET"])
 def get_algorithm():
-    algorithm = request.args.get('type')
-    algorithm = ALGORITHMS.get(algorithm)
+    algorithm_name = request.args.get("type")
+    algorithm = ALGORITHMS.get(algorithm_name)
 
     if not algorithm:
-        return jsonify({"Error": "invalid algorithm"})
+        return jsonify({"error": "invalid algorithm"}), 400
 
-    if CURRENT_ARRAY != []:
-        return algorithm(CURRENT_ARRAY)
-    else:
-        return jsonify({"Error": "must generate array first"})
+    if not CURRENT_ARRAY:
+        return jsonify({"error": "must generate array first"}), 400
 
+    return jsonify(algorithm(CURRENT_ARRAY))
+
+
+# =========================
+# ARRAY ROUTE (FIXED)
+# =========================
+# FIX: accept BOTH "/api/array" and "/api/array/"
+@array_bp.route("", methods=["GET"])
 @array_bp.route("/", methods=["GET"])
 def get_array():
-    size = request.args.get('size', default=10, type=int)
-    array_type = request.args.get('type', default='random')
+    size = request.args.get("size", default=10, type=int)
+    array_type = request.args.get("type", default="random")
 
-    gen = ARRAY_TYPES.get(array_type)
-    if not gen:
-        return jsonify({"Error": "invalid array type"})
+    generator = ARRAY_TYPES.get(array_type)
+    if not generator:
+        return jsonify({"error": "invalid array type"}), 400
 
     global CURRENT_ARRAY
-    CURRENT_ARRAY = gen(size)
+    CURRENT_ARRAY = generator(size)
 
     return jsonify(CURRENT_ARRAY)
