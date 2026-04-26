@@ -269,3 +269,53 @@ def cocktail_sort(arr):
 
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
+
+def radix_sort(arr):
+    steps = {"steps": []}
+    
+    def counting_sort(arr, exp):
+        n = len(arr)
+        output = [0] * n
+        count = [0] * 10  # Base 10
+
+        for i in range(n):
+            steps["steps"].append({
+                "type": "highlight",
+                "indices": [i]
+                })
+            index = (arr[i] // exp) % 10
+            count[index] += 1
+
+        for i in range(1, 10):
+            count[i] += count[i - 1]
+
+        for i in range(n - 1, -1, -1):
+            index = (arr[i] // exp) % 10
+            output[count[index] - 1] = arr[i]
+            count[index] -= 1
+
+        for i in range(n):
+            steps["steps"].append({
+                "type": "replace",
+                "index": i,
+                "value": output[i]
+            })
+            arr[i] = output[i]
+
+    def radix(arr):
+        if not arr:
+            return arr
+        
+        max_val = max(arr)
+
+        exp = 1
+        while max_val // exp > 0:
+            counting_sort(arr, exp)
+            exp *= 10
+        return arr
+
+    radix(arr)
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+print(radix_sort([1, 4, 3, 5, 2, 6, 8, 7, 9, 10, 14, 13, 11, 12, 15]))
