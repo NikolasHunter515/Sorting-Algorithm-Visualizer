@@ -12,6 +12,8 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     const [started, setStarted] = useState(false);
     const [count, setCount] = useState(0);
     const [stepSize, setStepSize] = useState(0);
+    const [highlightQueue, setHighlightQueue] = useState([]);//put the queue in localstorage
+    const [btnSize] = useState(5);
 
     function pause(){
         if(play){
