@@ -17,7 +17,7 @@ export default function HistoryTab(){
             </div>
 
 
-            <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#hist">
+            <button className="btn" id="hist-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#hist">
             History
             </button>
         </div>

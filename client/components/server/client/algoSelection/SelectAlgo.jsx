@@ -12,12 +12,12 @@ export default function SelectAlgo({ setAlgoName }){
     //make simple dropdown here, use loop too.
     return(
         <div>
-            <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Select Algos</button>
+            <button type="button" className="btn selectBtn dropdown-toggle" data-bs-toggle="dropdown" id="dDownToggle">Select Algos</button>
 
             <ul className="dropdown-menu">
                 {algoList.map((algo, index) => (
                     <li key={index}>
-                        <button className="btn dropdown-item" onClick={() => selection(algo.name)}>{algo.name}</button>
+                        <button className="btn dropdown-item" onClick={() => selection(algo.name)}><span className='me-2'>{algo.name}</span></button>
                     </li>
                 ))}
 
