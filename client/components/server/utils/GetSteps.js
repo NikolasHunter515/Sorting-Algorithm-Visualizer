@@ -18,7 +18,7 @@ export default async function GetSteps(name, algoData){
         //const res = await fetch(`http://localhost:5000/api/algorithm?algorithm=${shortName}&array=${data}`);
         const res = await fetch('http://localhost:5000/api/algorithm/', { 
             method: 'POST', 
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:3000/' }, 
+            headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ 
                 algorithm: shortName, 
                 array: tempDta
