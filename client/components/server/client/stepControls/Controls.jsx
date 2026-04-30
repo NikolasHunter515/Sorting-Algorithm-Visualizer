@@ -38,8 +38,7 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
         if(started){
             //fetch the steps
             const fetchData = async () => {
-                //todo replace with selected algo.
-                const algoSteps = await GetSteps(algoName);
+                const algoSteps = await GetSteps(algoName, chartData);
                 setSteps(algoSteps.steps);// works here need to test in play controls next.
                 //console.log(algoSteps.steps)
                 setStepSize(algoSteps.steps.length);
