@@ -19,13 +19,13 @@ export default function SelectCase({setRuntimeCase, setShowSort, inputSize, setC
 
     return(
         <div className="row">
-            <div className="col-auto">
+            <div className="col-auto" id="selectCaseBtn">
                 <button onClick={() => setCase("sorted")} className="btn" id="runTimeBtn">Sorted</button>
             </div>
-            <div className="col-auto">
+            <div className="col-auto" id="selectCaseBtn">
                 <button onClick={() => setCase("random")} className="btn" id="runTimeBtn">Random</button>
             </div>
-            <div className="col-auto">
+            <div className="col-auto" id="selectCaseBtn">
                 <button onClick={() => setCase("reverse")} className="btn" id="runTimeBtn">Reverse</button>
             </div>
         </div>

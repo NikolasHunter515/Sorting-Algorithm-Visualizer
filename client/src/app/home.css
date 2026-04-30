@@ -1,0 +1,101 @@
+.chartRend{
+    width: 100% !important;
+    max-width: 2000px !important;
+    background-color: #07165ED4 !important;
+    border-color: black !important;
+    border-style: solid !important;
+    border-width: 3px;
+}
+
+#chartPlace{
+    width: 750px;
+}
+
+.selectBtn{
+    width: 700px;
+    text-align: left !important;
+    background-color: var(--secondary-color) !important;
+    border-radius: 0 !important;
+}
+
+#dDownToggle::after{
+    margin-left: 36.0rem !important;
+}
+
+
+#runTimeBtn{
+    background-color: var(--secondary-color) !important;
+    border-radius: 50px;
+    /*max-width: 62px;*/
+    /*max-height: 18px;*/
+}
+
+#selectCaseBtn{
+    margin-left: 0px;
+    margin-right: 0px;
+    display: flex;
+    padding-right: 50px;
+    padding-left: 25px;
+}
+
+#hist-btn{
+    background-color: orange;
+    rotate: -90deg;
+}
+
+#homeHeader{
+    padding-top: 30px;
+    padding-bottom: 15px;
+}
+
+#histPlace{
+    padding-top: 20px;
+    padding-right: -10px;
+}
+
+#runtimePlace{
+    padding-top: 30px;
+    padding-left: 25px;
+}
+
+#inputSize{
+    width: 60px;
+    background-color: #ffffff00;
+    color: black;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+}
+
+#controlsPlace{
+    padding-top: 25px;
+    padding-left: 100px;
+    margin-left: 35px;
+    margin-right: 35px;
+    display: flex;
+    justify-content: center;
+}
+
+#controlBox {
+  padding: 2px 15px 12px 2px;
+  background-color: var(--third-color);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.control-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#desPlace{
+    padding-top: 25px;
+    height: 100%;
+}
