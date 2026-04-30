@@ -12,6 +12,7 @@ import HistoryTab from "../../components/server/client/history/HistoryTab";
 import { useState, useEffect } from 'react';
 import GetArray from "../../components/server/utils/GetArray";
 import GetSteps from "../../components/server/utils/GetSteps";
+import "../app/home.css";
 
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
   const [play, setPlay] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [steps, setSteps] = useState([]);
+  //localStorage.setItem("highlightQueue", []);
 
   //does handle change, except when random is clicked ideally it should generate again.
   useEffect (() => { // when this is changed the new array should also be sent to the backend.
@@ -38,6 +40,7 @@ export default function Home() {
       //await GetSteps("Bubble sort");// works here need to test in play controls next.
     };
     fetchData();
+    localStorage.setItem("highlightQueue", []) || [];
   }, [inputSize, runtimeCase]);// is a or condition here, meaning would need to put code in an if statement to have finer control over when it executes.
 
   /*useEffect(() => {
@@ -78,9 +81,8 @@ export default function Home() {
   return (
     <div className="page">
       <Navbar homePage={true}/>
-      homepage
 
-      <div className="row justify-content-center gx-10">
+      <div className="row justify-content-center gx-10" id="homeHeader">
         <div className="col-auto">
           <DisplayAlgoName name={algoName}/>
         </div>
@@ -90,16 +92,16 @@ export default function Home() {
       </div>
 
       <div className="row justify-content-center">
-        <div className="col-1">
+        <div className="col-1" id="histPlace">
           <HistoryTab />
           </div>
-        <div className="col-5">
+        <div className="col-5" id="chartPlace">
           <ChartRender data={chartData}/>
-          <div className="col">
+          <div className="col d-flex justify-content-center" id="runtimePlace">
             <SelectCase setRuntimeCase={setRuntimeCase} setShowSort={setShowSort} inputSize={inputSize} setChartData={setChartData}/>
           </div>
           <div className="col">
-              <div className="row">
+              <div className="row" id="controlsPlace">
                 <div className="col">
                   <SetInputSize inputSize={inputSize} setInputSize={setInputSize} />
                 </div>
@@ -111,9 +113,10 @@ export default function Home() {
         </div>
       </div>
 
-      jhfsjkdfh
-      <AlgoInfo />
-      <p>{runtimeCase} + {inputSize}</p>
+      <div id="desPlace">
+        <AlgoInfo />
+        <p>{runtimeCase} + {inputSize}</p>
+      </div>
     </div>
   );
 }
