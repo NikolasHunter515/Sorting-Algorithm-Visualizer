@@ -1,11 +1,11 @@
 import json
-
+ 
 def bubble_sort(arr):
     steps = {"steps": []}
     n = len(arr)
     for i in range(n):
         for j in range(n - i - 1):
-            steps["steps"].append({"type": "highlight", "indices": [j]})
+            steps["steps"].append({"type": "highlight", "indices": [j, j + 1]})
             if arr[j] > arr[j + 1]:
                 steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
@@ -22,7 +22,8 @@ def selection_sort(arr):
             steps["steps"].append({"type": "highlight", "indices": [j]})
             if arr[minIndex] > arr[j]:
                 minIndex = j
-
+        
+        steps["steps"].append({"type": "highlight", "indices": [i, minIndex]})
         if i != minIndex:
             steps["steps"].append({"type": "swap", "indices": [i, minIndex]})
             arr[i], arr[minIndex] = arr[minIndex], arr[i]
@@ -36,11 +37,17 @@ def insertion_sort(arr):
     for i in range(1, n):
         key = arr[i]
         j = i - 1
+ 
+        steps["steps"].append({"type": "highlight", "indices": [i]})
         while j >= 0 and arr[j] > key:
-            steps["steps"].append({"type": "highlight", "indices": [j]})
+            steps["steps"].append({"type": "highlight", "indices": [j, j + 1]})
             steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
             arr[j + 1] = arr[j]
             j -= 1
+            
+        if j != -1:
+            steps["steps"].append({"type": "highlight", "indices": [j, j + 1]})
+
         arr[j + 1] = key
     
     steps["steps"].append({"type": "stop"})
@@ -55,17 +62,17 @@ def merge_sort(arr):
 
         mid = (left + right) // 2
 
-        steps["steps"].append({
-            "type": "highlight",
-            "indices": list(range(left, mid))
-        })
+        # steps["steps"].append({
+        #     "type": "highlight",
+        #     "indices": list(range(left, mid))
+        # })
 
         merge_sort_recursive(left, mid)
 
-        steps["steps"].append({
-            "type": "highlight",
-            "indices": list(range(mid, right))
-        })
+        # steps["steps"].append({
+        #     "type": "highlight",
+        #     "indices": list(range(mid, right))
+        # })
 
         merge_sort_recursive(mid, right)
 
@@ -127,6 +134,8 @@ def quick_sort(arr):
                 })
                 if arr[j] <= pivot:
                     i += 1
+
+                    steps["steps"].append({"type": "highlight", "indices": [i, j]})
                     if i != j:
                         steps["steps"].append({
                         "type": "swap",
@@ -161,9 +170,11 @@ def heap_sort(arr):
             left = 2 * i + 1
             right = 2 * i + 2
 
-            if left < n and arr[left] > arr[largest]:
+            if left < n and arr[left] > arr[largest]: 
+                steps["steps"].append({"type": "highlight", "indices": [left, largest]})
                 largest = left
             if right < n and arr[right] > arr[largest]:
+                steps["steps"].append({"type": "highlight", "indices": [right, largest]})
                 largest = right
 
             if largest == i:
@@ -179,7 +190,7 @@ def heap_sort(arr):
     for i in range(n - 1, 0, -1):
         steps["steps"].append({
         "type": "highlight",
-        "indices": [i]
+        "indices": [0, i]
         })
         steps["steps"].append({
         "type": "swap",
@@ -193,8 +204,10 @@ def heap_sort(arr):
             right = 2 * root + 2
 
             if left < i and arr[left] > arr[largest]:
+                steps["steps"].append({"type": "highlight", "indices": [left, i]})
                 largest = left
-            if right < i and arr[right] > arr[largest]:
+            if right < i and arr[right] > arr[largest]: 
+                steps["steps"].append({"type": "highlight", "indices": [right, i]})
                 largest = right
 
             if largest == root:
@@ -223,7 +236,7 @@ def cocktail_sort(arr):
         for i in range(start, end):
             steps["steps"].append({
             "type": "highlight",
-            "indices": [i]
+            "indices": [i, i + 1]
             })
             if arr[i] > arr[i + 1]:
                 steps["steps"].append({
@@ -242,7 +255,7 @@ def cocktail_sort(arr):
         for i in range(end - 1, start - 1, -1):
             steps["steps"].append({
             "type": "highlight",
-            "indices": [i]
+            "indices": [i, i + 1]
             })
             if arr[i] > arr[i + 1]:
                 steps["steps"].append({
