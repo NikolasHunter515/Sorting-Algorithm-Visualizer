@@ -1,5 +1,7 @@
 import json
- 
+
+# ================ COMPARISON BASED ALGORITHMS ===================
+
 def bubble_sort(arr):
     steps = {"steps": []}
     n = len(arr)
@@ -9,6 +11,100 @@ def bubble_sort(arr):
             if arr[j] > arr[j + 1]:
                 steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def optimized_bubble_sort(arr):
+    steps = {"steps": []}
+    n = len(arr)
+    for i in range(n):
+        changed = False
+        for j in range(n - i - 1):
+            steps["steps"].append({"type": "highlight", "indices": [j, j + 1]})
+            if arr[j] > arr[j + 1]:
+                changed = True
+                steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+        if changed == False:
+            steps["steps"].append({"type": "stop"})
+            return json.dumps(steps)
+            
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def odd_even_sort(arr):
+    steps = {"steps": []}
+    n = len(arr)
+    isSorted = 0
+
+    while isSorted == 0:
+        isSorted = 1
+        for i in range(1, n-1, 2):
+            steps["steps"].append({"type": "highlight", "indices": [i, i + 1]})
+
+            if arr[i] > arr[i+1]:
+                steps["steps"].append({"type": "swap", "indices": [i, i + 1]})
+                arr[i], arr[i+1] = arr[i+1], arr[i]
+                isSorted = 0
+                
+        for i in range(0, n-1, 2):
+            steps["steps"].append({"type": "highlight", "indices": [i, i + 1]})
+
+            if arr[i] > arr[i+1]:
+                steps["steps"].append({"type": "swap", "indices": [i, i + 1]})
+                arr[i], arr[i+1] = arr[i+1], arr[i]
+                isSorted = 0
+    
+ 
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def comb_sort(arr):
+    steps = {"steps": []}
+
+    def getNextGap(gap):
+
+        gap = (gap * 10)//13
+        if gap < 1:
+            return 1
+        return gap
+
+
+    n = len(arr)
+    gap = n
+    swapped = True
+
+    while gap !=1 or swapped == 1:
+
+        gap = getNextGap(gap)
+        swapped = False
+
+        for i in range(0, n-gap):
+            steps["steps"].append({"type": "highlight", "indices": [i, i + gap]})
+            if arr[i] > arr[i + gap]:
+                steps["steps"].append({"type": "swap", "indices": [i, i + gap]})
+                arr[i], arr[i + gap]=arr[i + gap], arr[i]
+                swapped = True
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def gnome_sort(arr):
+    steps = {"steps": []}
+    n = len(arr)
+    index = 0
+    while index < n:
+        if index == 0:
+            index = index + 1
+        steps["steps"].append({"type": "highlight", "indices": [index, index - 1]})
+        if arr[index] >= arr[index - 1]:
+            index = index + 1
+        else:
+            steps["steps"].append({"type": "swap", "indices": [index, index - 1]})
+            arr[index], arr[index-1] = arr[index-1], arr[index]
+            index = index - 1
 
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
@@ -30,6 +126,51 @@ def selection_sort(arr):
 
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
+
+def bidirectional_selection_sort(arr):
+    steps = {"steps": []}
+
+    n = len(arr)
+    i = 0
+    j = n - 1
+    while(i < j):
+        min = arr[i]
+        max = arr[i]
+        min_i = i
+        max_i = i
+
+
+        for k in range(i, j + 1, 1): 
+            steps["steps"].append({"type": "highlight", "indices": [i, j, k]})
+            if (arr[k] > max):
+                max = arr[k]
+                max_i = k
+            elif (arr[k] < min):
+                min = arr[k]
+                min_i = k
+        
+        steps["steps"].append({"type": "swap", "indices": [i, min_i]})
+        temp = arr[i]
+        arr[i] = arr[min_i]
+        arr[min_i] = temp
+
+        if (arr[min_i] == max):
+            steps["steps"].append({"type": "swap", "indices": [j, min_i]})
+            temp = arr[j]
+            arr[j] = arr[min_i]
+            arr[min_i] = temp
+        else:
+            steps["steps"].append({"type": "swap", "indices": [j, max_i]})
+            temp = arr[j]
+            arr[j] = arr[max_i]
+            arr[max_i] = temp
+
+        i += 1
+        j -= 1
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
 
 def insertion_sort(arr):
     steps = {"steps": []}
@@ -317,5 +458,3 @@ def radix_sort(arr):
     radix(arr)
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
-
-print(radix_sort([1, 4, 3, 5, 2, 6, 8, 7, 9, 10, 14, 13, 11, 12, 15]))

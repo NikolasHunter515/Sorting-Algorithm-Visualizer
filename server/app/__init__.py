@@ -6,12 +6,12 @@ def create_app():
     CORS(app)
 
     from .routes.users import users_bp
-    app.register_blueprint(users_bp, url_prefix="/api/users")
+    app.register_blueprint(users_bp)
 
     from .routes.algorithmAPI import algorithm_bp
-    app.register_blueprint(algorithm_bp, url_prefix="/api/algorithm/")
+    app.register_blueprint(algorithm_bp)
 
     from .routes.algorithmAPI import array_bp
-    app.register_blueprint(array_bp, url_prefix="/api/array")
+    app.register_blueprint(array_bp)
 
     return app

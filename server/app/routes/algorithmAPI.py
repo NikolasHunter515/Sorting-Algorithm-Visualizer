@@ -15,7 +15,12 @@ ARRAY_TYPES = {
 
 ALGORITHMS = {
     "bubble": bubble_sort,
+    "bubble_optimized": optimized_bubble_sort,
+    "odd_even": odd_even_sort,
+    "comb": comb_sort,
+    "gnome": gnome_sort,
     "selection": selection_sort,
+    "selection_bidirectional": bidirectional_selection_sort,
     "insertion": insertion_sort,
     "merge": merge_sort,
     "quick": quick_sort,
@@ -27,7 +32,7 @@ ALGORITHMS = {
 algorithm_bp = Blueprint("algorithm", __name__)
 array_bp = Blueprint("array", __name__)
 
-@algorithm_bp.route("/", methods=["POST"])
+@algorithm_bp.route("/api/algorithm/", methods=["POST"])
 def get_algorithm():
     json = request.get_json()
    
@@ -52,7 +57,7 @@ def get_algorithm():
     # else:
     #     return jsonify({"Error": "must generate array first"})
 
-@array_bp.route("/", methods=["GET"])
+@array_bp.route("/api/array", methods=["GET"])
 def get_array():
     size = request.args.get('size', default=10, type=int)
     array_type = request.args.get('type', default='random')
