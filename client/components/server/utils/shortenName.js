@@ -18,6 +18,8 @@ export default function shortenName(name){
             return "heap";
         case "Cocktail sort":
             return "cocktail";
+        case "Radix sort":
+            return "radix";
         default:
             return null;
     }        

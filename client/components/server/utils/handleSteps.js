@@ -1,5 +1,5 @@
 
-var defaultFill = "#2117ec";
+var defaultFill = "#3AC3C5";
 var highlightFill = "#1F77b4";
 let queue = [];
 
