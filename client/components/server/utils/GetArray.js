@@ -4,7 +4,7 @@ export default async function GetArray(name, size=10){
 
     //TODO add a try catch block to handle values out of range from 10 to 100. No negative values.
     //size is not nessasary as there is a default value already on the backend.
-    const res = await fetch(`http://localhost:5000/api/array?type=${name}&size=${size}`, 
+    const res = await fetch(`http://localhost:8000/api/array?type=${name}&size=${size}`, 
         {
         method: "GET",
         }
