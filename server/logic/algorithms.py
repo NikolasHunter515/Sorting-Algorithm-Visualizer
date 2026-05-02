@@ -1,5 +1,6 @@
 import json
-
+import random
+import math
 # ================ COMPARISON BASED ALGORITHMS ===================
 
 def bubble_sort(arr):
@@ -194,7 +195,71 @@ def insertion_sort(arr):
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
 
-def merge_sort(arr):
+
+
+def binary_insertion_sort(arr):
+    steps = {"steps": []}
+
+    def binary_search(arr, val, start, end, i):
+        
+        if start == end:
+            if arr[start] > val:
+                return start
+            else:
+                return start+1
+
+        if start > end:
+            return start
+
+        mid = (start+end)//2
+        steps['steps'].append({"type": "highlight", "indices": [mid, i]})
+        if arr[mid] < val:
+            return binary_search(arr, val, mid+1, end, i)
+        elif arr[mid] > val:
+            return binary_search(arr, val, start, mid-1, i)
+        else:
+            return mid
+
+    for i in range(1, len(arr)):
+        val = arr[i]
+        j = binary_search(arr, val, 0, i-1, i)
+
+        if j != i:
+            steps['steps'].append({"type": "replace", "index": j, "value": arr[i]})
+            for k in range(j + 1, i + 1):
+                steps['steps'].append({"type": "replace", "index": k, "value": arr[k - 1]})
+            arr = arr[:j] + [val] + arr[j:i] + arr[i+1:]
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def shell_sort(arr):
+    steps = {"steps": []}
+    n = len(arr)
+
+    gap = n // 2
+    while gap > 0:
+
+        for i in range(gap, n):
+            steps['steps'].append({"type": "highlight", "indices": [i]})
+            temp = arr[i]   
+            j = i
+
+            while j >= gap and arr[j - gap] > temp:
+                steps['steps'].append({"type": "highlight", "indices": [j - gap, i]})
+                steps['steps'].append({"type": "replace", "index": j, "value": arr[j - gap]})
+                arr[j] = arr[j - gap]
+                j -= gap
+        
+            steps['steps'].append({"type": "replace", "index": j, "value": temp})
+            arr[j] = temp
+
+        gap //= 2
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+ 
+def merge_sort_bottom_up(arr):
     steps = {"steps": []}
 
     def merge_sort_recursive(left, right):
@@ -203,18 +268,7 @@ def merge_sort(arr):
 
         mid = (left + right) // 2
 
-        # steps["steps"].append({
-        #     "type": "highlight",
-        #     "indices": list(range(left, mid))
-        # })
-
         merge_sort_recursive(left, mid)
-
-        # steps["steps"].append({
-        #     "type": "highlight",
-        #     "indices": list(range(mid, right))
-        # })
-
         merge_sort_recursive(mid, right)
 
         merge(left, mid, right)
@@ -258,46 +312,134 @@ def merge_sort(arr):
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
 
-def quick_sort(arr):
+def merge_sort_top_down(arr):
     steps = {"steps": []}
-    stack = [(0, len(arr) - 1)]
 
-    while stack:
-        low, high = stack.pop()
-        if low < high:
-            pivot = arr[high]
-            i = low - 1
+    def merge(arr, left, mid, right):
+        
+        n1 = mid - left + 1
+        n2 = right - mid
+        
+        arr1 = arr[left:left + n1]
+        arr2 = arr[mid + 1:mid + 1 + n2]
+        
+        i = 0    
+        j = 0    
+        k = left 
+        
+        while i < n1 and j < n2:
+            if arr1[i] <= arr2[j]:
+                steps['steps'].append({"type": "highlight", "indices": [k]}) 
+                steps['steps'].append({"type": "replace", "index": k, "value": arr1[i]})
+                arr[k] = arr1[i]
+                i += 1
+            else:
+                steps['steps'].append({"type": "highlight", "indices": [k]}) 
+                steps['steps'].append({"type": "replace", "index": k, "value": arr2[j]})
+                arr[k] = arr2[j]
+                j += 1
+            k += 1
+        
+        while i < n1:
+            steps['steps'].append({"type": "highlight", "indices": [k]}) 
+            steps['steps'].append({"type": "replace", "index": k, "value": arr1[i]})
+            arr[k] = arr1[i]
+            i += 1
+            k += 1
+        
+        while j < n2:
+            steps['steps'].append({"type": "highlight", "indices": [k]}) 
+            steps['steps'].append({"type": "replace", "index": k, "value": arr2[j]})
+            arr[k] = arr2[j]
+            j += 1
+            k += 1
 
-            for j in range(low, high):
-                steps["steps"].append({
-                "type": "highlight",
-                "indices": [high, j]
-                })
-                if arr[j] <= pivot:
-                    i += 1
+    n = len(arr)
+    
+    currSize = 1
+    while currSize <= n - 1:
+        
+        leftStart = 0
+        while leftStart < n - 1:
+            
+            mid = min(leftStart + currSize - 1, n - 1)
+            rightEnd = min(leftStart + 2 * currSize - 1, n - 1)
+            
+            merge(arr, leftStart, mid, rightEnd)
+            
+            leftStart += 2 * currSize
 
-                    steps["steps"].append({"type": "highlight", "indices": [i, j]})
-                    if i != j:
-                        steps["steps"].append({
-                        "type": "swap",
-                        "indices": [i, j]
-                        })
-                        arr[i], arr[j] = arr[j], arr[i]
-
-            steps["steps"].append({
-            "type": "swap",
-            "indices": [i + 1, high]
-            })
-            arr[i + 1], arr[high] = arr[high], arr[i + 1]
-            pivot_idx = i + 1
-
-            stack.append((low, pivot_idx - 1))
-            stack.append((pivot_idx + 1, high))
+        currSize = 2 * currSize
 
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
 
-def heap_sort(arr):
+def quick_sort_right_pivot(arr):
+    steps = {"steps": []}
+
+    def partition(arr, low, high):
+        pivot = arr[high]
+        i = low - 1
+
+        for j in range(low, high):
+            steps['steps'].append({"type": "highlight", "indices": [j, high]})
+            if arr[j] < pivot:
+                i += 1
+                steps['steps'].append({"type": "swap", "indices": [i, j]})
+                arr[i], arr[j] = arr[j], arr[i]
+
+        steps['steps'].append({"type": "swap", "indices": [i + 1, high]})
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+
+        return i + 1 
+
+    def quick_sort(arr, low, high):
+        if low < high:
+            pivot_index = partition(arr, low, high)
+            quick_sort(arr, low, pivot_index - 1)
+            quick_sort(arr, pivot_index + 1, high)
+
+    quick_sort(arr, 0, len(arr) - 1)
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def quick_sort_random_pivot(arr):
+    steps = {"steps": []}
+
+    def partition(arr, low, high):
+        rand_index = random.randint(low, high - 1)
+        steps['steps'].append({"type": "highlight", "indices": [rand_index]})
+
+        steps['steps'].append({"type": "swap", "indices": [rand_index, high]})
+        arr[rand_index], arr[high] = arr[high], arr[rand_index]
+
+        pivot = arr[high]
+        i = low - 1
+        for j in range(low, high):
+            steps['steps'].append({"type": "highlight", "indices": [j, high]})
+            if arr[j] < pivot:
+                i += 1
+                steps['steps'].append({"type": "swap", "indices": [i, j]})
+                arr[i], arr[j] = arr[j], arr[i]
+
+        steps['steps'].append({"type": "swap", "indices": [i + 1, high]})
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+
+        return i + 1  
+
+    def quick_sort(arr, low, high):
+        if low < high:
+            pivot_index = partition(arr, low, high)
+            quick_sort(arr, low, pivot_index - 1)
+            quick_sort(arr, pivot_index + 1, high)
+
+    quick_sort(arr, 0, len(arr) - 1)
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def max_heap_sort(arr):
     steps = {"steps": []}
     n = len(arr)
 
@@ -364,6 +506,50 @@ def heap_sort(arr):
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
 
+def min_heap_sort(arr):
+    steps = {"steps": []}
+
+    def heapify_min(arr, n, i):
+        smallest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+
+        if left < n and arr[left] < arr[smallest]:
+            steps["steps"].append({"type": "highlight", "indices": [left, smallest]})
+            smallest = left
+        if right < n and arr[right] < arr[smallest]:
+            steps["steps"].append({"type": "highlight", "indices": [right, smallest]})
+            smallest = right
+
+        if smallest != i:
+            steps["steps"].append({"type": "swap", "indices": [smallest, i]})
+            arr[i], arr[smallest] = arr[smallest], arr[i]
+            heapify_min(arr, n, smallest)
+
+    n = len(arr)
+
+    # Build min heap
+    for i in range(n // 2 - 1, -1, -1):
+        steps["steps"].append({"type": "highlight", "indices":  [i]})
+        heapify_min(arr, n, i)
+
+    # Extract max to end, shrink heap from the front
+    for i in range(n - 1, 0, -1):
+        steps["steps"].append({"type": "swap", "indices": [0, i]})
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify_min(arr, i, 0)
+
+    i = 0
+    j = len(arr) - 1
+    while i <= j:
+        steps["steps"].append({"type": "swap", "indices": [i, j]}) 
+        arr[i], arr[j] = arr[j], arr[i]  
+        i += 1
+        j -= 1
+
+    steps['steps'].append({"type": "stop"})
+    return json.dumps(steps)
+
 def cocktail_sort(arr):
     steps = {"steps": []}
     n = len(arr)
@@ -411,50 +597,134 @@ def cocktail_sort(arr):
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
 
-def radix_sort(arr):
+def msd_radix_sort(array, radix=10):
     steps = {"steps": []}
-    
-    def counting_sort(arr, exp):
-        n = len(arr)
-        output = [0] * n
-        count = [0] * 10  # Base 10
 
-        for i in range(n):
-            steps["steps"].append({
-                "type": "highlight",
-                "indices": [i]
-                })
-            index = (arr[i] // exp) % 10
-            count[index] += 1
+    def get_digit(val, exp, minValue):
+        return math.floor(((val - minValue) / exp) % radix)
 
-        for i in range(1, 10):
-            count[i] += count[i - 1]
-
-        for i in range(n - 1, -1, -1):
-            index = (arr[i] // exp) % 10
-            output[count[index] - 1] = arr[i]
-            count[index] -= 1
-
-        for i in range(n):
-            steps["steps"].append({
-                "type": "replace",
-                "index": i,
-                "value": output[i]
-            })
-            arr[i] = output[i]
-
-    def radix(arr):
-        if not arr:
-            return arr
-        
-        max_val = max(arr)
-
+    def get_max_exp(array, minValue):
+        max_val = max(array) - minValue
         exp = 1
-        while max_val // exp > 0:
-            counting_sort(arr, exp)
-            exp *= 10
-        return arr
+        while max_val // exp >= radix:
+            exp *= radix
+        return exp
 
-    radix(arr)
+    def sort(array, low, high, exp, minValue):
+        if high - low <= 1 or exp < 1:
+            return
+
+        buckets = [[] for _ in range(radix)]
+
+        for i in range(low, high):
+            steps["steps"].append({"type": "highlight", "indices": [i]})
+            digit = get_digit(array[i], exp, minValue)
+            buckets[digit].append(array[i])
+
+        idx = low
+        for bucket in buckets:
+            for val in bucket:
+                array[idx] = val
+                steps["steps"].append({"type": "replace", "index": idx, "value": val})
+                idx += 1
+
+        idx = low
+        for bucket in buckets:
+            if len(bucket) > 1:
+                sort(array, idx, idx + len(bucket), exp // radix, minValue)
+            idx += len(bucket)
+
+    if len(array) == 0:
+        return array
+
+    minValue = min(array)
+    exp = get_max_exp(array, minValue)
+
+    sort(array, 0, len(array), exp, minValue)
+
     steps["steps"].append({"type": "stop"})
     return json.dumps(steps)
+
+def lsd_radix_sort(array, radix=10):
+    steps = {"steps": []}
+
+    def countingSortByDigit(array, radix, exponent, minValue):
+        bucketIndex = -1
+        buckets = [0] * radix
+        output = [None] * len(array)
+        
+        for i in range(0, len(array)):
+            steps["steps"].append({"type": "highlight", "indices": [i]})
+            bucketIndex = math.floor(((array[i] - minValue) / exponent) % radix)
+            buckets[bucketIndex] += 1
+
+        for i in range(1, radix):
+            buckets[i] += buckets[i - 1]
+
+        for i in range(len(array) - 1, -1, -1):
+            bucketIndex = math.floor(((array[i] - minValue) / exponent) % radix)
+            buckets[bucketIndex] -= 1
+            output[buckets[bucketIndex]] = array[i]
+
+        return output
+
+    if len(array) == 0:
+        return array
+
+    minValue = array[0];
+    maxValue = array[0];
+    for i in range(1, len(array)):
+        steps["steps"].append({"type": "highlight", "indices": [i]})
+        if array[i] < minValue:
+            minValue = array[i]
+        elif array[i] > maxValue:
+            maxValue = array[i]
+
+    exponent = 1
+    while (maxValue - minValue) / exponent >= 1:
+        tempArray = countingSortByDigit(array, radix, exponent, minValue)
+        for i in range(len(tempArray)):
+            steps["steps"].append({"type": "replace", "index": i, "value": tempArray[i]})
+            array[i] = tempArray[i]
+
+        exponent *= radix
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+def pancake_sort(arr): 
+    steps = {"steps": []}
+
+    n = len(arr)
+    def flip(arr, i):
+        start = 0
+        while start < i:
+            steps["steps"].append({"type": "swap", "indices": [start, i]})
+            temp = arr[start]
+            arr[start] = arr[i]
+            arr[i] = temp
+            start += 1
+            i -= 1
+
+    def findMax(arr, n):
+        mi = 0
+        for i in range(0,n):
+            steps["steps"].append({"type": "highlight", "indices": [i, mi]})
+            if arr[i] > arr[mi]:
+                mi = i
+        return mi
+
+    curr_size = n
+    while curr_size > 1:
+        mi = findMax(arr, curr_size)
+
+        if mi != curr_size-1:
+            flip(arr, mi)
+
+            flip(arr, curr_size-1)
+        curr_size -= 1
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
+
+

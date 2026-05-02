@@ -74,7 +74,7 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
                 }
                 
 
-                }, 500);//use 250 as default, also should be passed as a parameter
+                }, 50);//use 250 as default, also should be passed as a parameter
             if(count >= stepSize - 1 || count < 0){
                 //count stops after reaching value + 1
                 setPlay(false);

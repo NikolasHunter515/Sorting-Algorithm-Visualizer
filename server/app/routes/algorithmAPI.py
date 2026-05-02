@@ -19,14 +19,21 @@ ALGORITHMS = {
     "odd_even": odd_even_sort,
     "comb": comb_sort,
     "gnome": gnome_sort,
+    "cocktail": cocktail_sort,
     "selection": selection_sort,
     "selection_bidirectional": bidirectional_selection_sort,
     "insertion": insertion_sort,
-    "merge": merge_sort,
-    "quick": quick_sort,
-    "heap": heap_sort,
-    "cocktail": cocktail_sort,
-    "radix": radix_sort,
+    "insertion_binary": binary_insertion_sort,
+    "shell": shell_sort,
+    "merge_top": merge_sort_top_down,
+    "merge_bottom": merge_sort_bottom_up,
+    "quick_right": quick_sort_right_pivot,
+    "quick_random": quick_sort_random_pivot,
+    "heap_min": min_heap_sort,
+    "heap_max": max_heap_sort,
+    "radix_msd": msd_radix_sort,
+    "radix_lsd": lsd_radix_sort,
+    "pancake": pancake_sort
 }
 
 algorithm_bp = Blueprint("algorithm", __name__)
@@ -62,8 +69,8 @@ def get_array():
     size = request.args.get('size', default=10, type=int)
     array_type = request.args.get('type', default='random')
     
-    if size > 100:
-        size = 100
+    if size > 200:
+        size = 200
     elif size < 0:
         size = 0
 
