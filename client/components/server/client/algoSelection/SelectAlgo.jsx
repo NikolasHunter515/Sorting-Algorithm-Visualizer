@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 export default function SelectAlgo({ setAlgoName }){
-    const [algoList] = useState([{name: "Quicksort"}, {name: "Bubble sort"}, {name: "Insertion sort"}, {name: "Selection sort"}, {name: "Merge sort"}, {name: "Heap sort"}, {name: "Cocktail sort"}, {name: "Radix sort"}]);
+    const [algoList] = useState([{name: "Quicksort (right pivot)"}, {name: "Quicksort (left pivot)"}, {name: "Bubble sort"}, {name: "Bubble sort(optimized)"}, {name: "Odd even sort"}, {name: "Comb sort"}, {name: "Gnome sort"}, {name: "Insertion sort"}, {name: "Binary Insertion sort"}, {name: "Selection sort"}, {name: "Bidirectoinal Selection sort"}, {name: "Shell sort"}, {name: "Merge sort(top down)"}, {name: "Merge sort(bottom up)"}, {name: "Heap sort"}, {name: "Min Heap sort"}, {name: "Cocktail sort"}, {name: "Radix sort(MSD)"}, {name: "Radix sort(LSD)"}, {name: "Pancake sort"}]);
 
     function selection(name){
         setAlgoName(name);

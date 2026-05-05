@@ -18,7 +18,7 @@ import "../app/home.css";
 export default function Home() {
   //const [arr, setArr] = useState([1,4,5,6]);
   const arr = [1,4,5,6];
-  const [algoName, setAlgoName] = useState("Quicksort");
+  const [algoName, setAlgoName] = useState("Bubble sort");
   const [description, setDescription] = useState("Select an algorithm for a description");
   const [inputSize, setInputSize] = useState(10); // max size should be 100 for now.
   const [runtimeCase, setRuntimeCase] = useState("random"); // 1: sorted, 2: random, 3: reserse sorted
