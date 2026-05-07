@@ -4,123 +4,90 @@ import { useEffect, useState } from "react";
 import GetSteps from "../../utils/GetSteps";
 import handleSteps from "../../utils/handleSteps";
 
-export default function StepControls({
-    play,
-    setPlay,
-    chartData,
-    setChartData,
-    setSteps,
-    steps,
-    algoName
-}) {
-
+export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName}){
+    //should send a request to backend to start soring, will recieve the steps then store in data.
+    //will update the play toggle after recieving the data
+    //need to think of way to keep track of when we should request data or just control the animation.
+    //will be one of the more complex components.
     const [started, setStarted] = useState(false);
     const [count, setCount] = useState(0);
     const [stepSize, setStepSize] = useState(0);
-    const [error, setError] = useState(null);
 
-    // =========================
-    // PLAY / PAUSE CONTROLS
-    // =========================
-    function pause() {
-        setPlay(false);
+    function pause(){
+        if(play){
+            setPlay(false);
+            console.log("Pausing");
+        }
     }
 
-    function resume() {
-        if (!algoName) {
-            console.error("No algorithm selected");
-            return;
+    function resume(){
+        if(!play){
+            setPlay(true);
+            console.log("Resuming");
+            if(!started){
+                setStarted(true);
+            }
+
+        }
+    }
+
+    //fetch steps from backend
+    useEffect(() => {
+        if(started){
+            //fetch the steps
+            const fetchData = async () => {
+                //todo replace with selected algo.
+                const algoSteps = await GetSteps(algoName);
+                setSteps(algoSteps.steps);// works here need to test in play controls next.
+                //console.log(algoSteps.steps)
+                setStepSize(algoSteps.steps.length);
+                };
+                fetchData();// works here need to test in play controls next.
         }
 
-        setError(null);
-        setPlay(true);
-        setStarted(true);
-    }
+    }, [started]);
 
-    // =========================
-    // FETCH STEPS
-    // =========================
+    //console.log(steps[0]);
+    //read steps
     useEffect(() => {
-        if (!started || !algoName) return;
+        if(stepSize === 0) return;
 
-        const fetchData = async () => {
-            try {
-                const res = await GetSteps(algoName);
+        if(play){//issue only runs once as the original array is tampered with and the indexing is messed up.
+            setTimeout(() => {
+                setCount((count) => count + 1);
+                console.log(steps[count]);
+                //console.log(steps[count].indices);
 
-                console.log("GET STEPS RESPONSE:", res);
-
-                const extractedSteps = res.steps ?? res.data ?? res;
-
-                if (!Array.isArray(extractedSteps)) {
-                    throw new Error("Invalid steps format received from backend");
+                const updated = handleSteps(steps[count], chartData);
+                if(updated != null){
+                    setChartData(updated);
                 }
+                else{
+                    setCount((count) => count = 0);
+                }
+                
 
-                setSteps(extractedSteps);
-                setStepSize(extractedSteps.length);
-                setCount(0);
-
-            } catch (err) {
-                console.error("Fetch error:", err.message);
-                setError(err.message);
+                }, 250);
+            if(count >= stepSize - 1 || count < 0){
+                //count stops after reaching value + 1
                 setPlay(false);
                 setStarted(false);
+                setCount(0);
             }
-        };
-
-        fetchData();
-    }, [started, algoName, setSteps]);
-
-    // =========================
-    // ANIMATION LOOP
-    // =========================
-    useEffect(() => {
-        if (!play || stepSize === 0 || !steps?.length) return;
-
-        if (count >= stepSize) {
-            setPlay(false);
-            setStarted(false);
-            setCount(0);
-            return;
         }
 
-        const timer = setTimeout(() => {
-            const step = steps[count];
+    }, [play, count, steps]);
 
-            if (!step) return;
+    //TODO write method to get steps from backend if not clicked
+    //TODO write use effect to test pause play with auto reload if completed.
+    //FIXME altering the master data, meaning need to make copy to alter.
 
-            const updated = handleSteps(step, chartData);
-
-            if (updated) {
-                setChartData(updated);
-            }
-
-            setCount(prev => prev + 1);
-
-        }, 250);
-
-        return () => clearTimeout(timer);
-
-    }, [play, count, steps, stepSize, chartData, setChartData, setPlay]);
-
-    // =========================
-    // UI
-    // =========================
-    return (
+    return(
         <div>
-            {error && (
-                <div className="alert alert-danger" role="alert">
-                    {error}
-                </div>
-            )}
             <div className="row">
                 <div className="col-auto">
-                    <button className="btn" onClick={resume} disabled={!algoName}>
-                        Play {count}
-                    </button>
-
-                    <button className="btn" onClick={pause}>
-                        Pause
-                    </button>
+                    <button className="btn" onClick={() => resume()}>Play {count}</button>
+                    <button className="btn" onClick={() => pause()}>Pause</button>
                 </div>
             </div>
         </div>
