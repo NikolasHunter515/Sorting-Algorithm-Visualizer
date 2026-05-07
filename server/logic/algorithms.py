@@ -1,5 +1,3 @@
-import json
-
 def bubble_sort(arr):
     steps = {"steps": []}
     n = len(arr)
@@ -11,7 +9,7 @@ def bubble_sort(arr):
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def selection_sort(arr):
     steps = {"steps": []}
@@ -28,7 +26,7 @@ def selection_sort(arr):
             arr[i], arr[minIndex] = arr[minIndex], arr[i]
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def insertion_sort(arr):
     steps = {"steps": []}
@@ -44,7 +42,7 @@ def insertion_sort(arr):
         arr[j + 1] = key
     
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def merge_sort(arr):
     steps = {"steps": []}
@@ -108,7 +106,7 @@ def merge_sort(arr):
     merge_sort_recursive(0, len(arr))
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def quick_sort(arr):
     steps = {"steps": []}
@@ -145,7 +143,7 @@ def quick_sort(arr):
             stack.append((pivot_idx + 1, high))
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def heap_sort(arr):
     steps = {"steps": []}
@@ -208,7 +206,7 @@ def heap_sort(arr):
             root = largest
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
 
 def cocktail_sort(arr):
     steps = {"steps": []}
@@ -255,4 +253,4 @@ def cocktail_sort(arr):
         start += 1
 
     steps["steps"].append({"type": "stop"})
-    return json.dumps(steps)
+    return steps
