@@ -99,3 +99,13 @@
     padding-top: 25px;
     height: 100%;
 }
+
+.slidecontainer{
+    width: 300px;
+}
+
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}

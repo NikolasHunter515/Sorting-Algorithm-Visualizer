@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import GetSteps from "../../utils/GetSteps";
 import handleSteps from "../../utils/handleSteps";
+import GetArray from "../../utils/GetArray";
 
-export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName}){
+export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, size, speed}){
     //should send a request to backend to start soring, will recieve the steps then store in data.
     //will update the play toggle after recieving the data
     //need to think of way to keep track of when we should request data or just control the animation.
@@ -14,6 +15,9 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     const [stepSize, setStepSize] = useState(0);
     const [highlightQueue, setHighlightQueue] = useState([]);//put the queue in localstorage
     const [btnSize] = useState(5);
+    const [tempData, setTempData] = useState(chartData);
+    const [finished, setFinished] = useState(false);
+    //make a finished flag outside if it changes it will get a new array outside of this.
 
     function pause(){
         if(play){
@@ -29,6 +33,9 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
             if(!started){
                 setStarted(true);
             }
+            /*if(finished){
+                setChartData(tempData);
+            }*/
 
         }
     }
@@ -36,17 +43,33 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     //fetch steps from backend
     useEffect(() => {
         if(started){
+            if(finished){
+            const fetchData = async () => {
+                // get new array
+                const nuAlgo = await GetArray(runtime, size);
+
+                //get new steps
+                const algoSteps = await GetSteps(algoName, nuAlgo);
+                setSteps(algoSteps.steps);
+            };
+            fetchData();
+        }
             //fetch the steps
             const fetchData = async () => {
+                if(finished){
+                    const nuAlgo = await GetArray(runtime, size);
+                    console.log("Running again getting new array");
+                    
+                }
                 const algoSteps = await GetSteps(algoName, chartData);
                 setSteps(algoSteps.steps);// works here need to test in play controls next.
                 //console.log(algoSteps.steps)
                 setStepSize(algoSteps.steps.length);
+                setFinished(false);
                 };
                 fetchData();// works here need to test in play controls next.
         }
-
-    }, [started]);
+    }, [started, finished]);
 //not sure this was needed to solve the unhighlighting problem
     /*
     useEffect(() => {
@@ -74,11 +97,12 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
                 }
                 
 
-                }, 50);//use 250 as default, also should be passed as a parameter
+                }, speed);//use 250 as default, also should be passed as a parameter
             if(count >= stepSize - 1 || count < 0){
                 //count stops after reaching value + 1
                 setPlay(false);
                 setStarted(false);
+                setFinished(true);
                 setCount(0);
             }
         }
