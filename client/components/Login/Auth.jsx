@@ -1,11 +1,14 @@
-'use client';
+"use client";
 import React, { useState } from 'react';
 import { supabase } from "../../lib/supabase";
 export default function Auth(){
-
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [logReg, setLogReg] = useState(false);
+    const [errorMsg, seterrorMsg] = useState("");
+    const [successMsg, setsuccessMsg] = useState("");
+
 
     const log = () => setLogReg(false);
     const reg = () => setLogReg(true);
@@ -22,8 +25,10 @@ export default function Auth(){
 
             if(error){
                 console.log("Login Error:", error.message);
+                seterrorMsg("account not found")
             } else {
                 console.log("Login Success:", data);
+                seterrorMsg("")
 
                 // 🔥 access token (IMPORTANT)
                 const token = data.session.access_token;
@@ -47,9 +52,10 @@ export default function Auth(){
 
             if(error){
                 console.log("Register Error:", error.message);
+                setsuccessMsg("email already registered")
             } else {
                 console.log("Register Success:", data);
-
+                setsuccessMsg("Registration successful")
                 const token = data.session?.access_token;
                 //console.log("Access Token:", token);
             }
@@ -72,6 +78,12 @@ export default function Auth(){
 
                 {!logReg && (
                     <form onSubmit={handleLogin}>
+
+                        {errorMsg &&(
+                                 <div className="text-danger text-center mb-3">
+                                     {errorMsg}
+                            </div>
+                        )}
                         <div className='row'>
                             <label>Email</label>
                             <input 
@@ -102,6 +114,13 @@ export default function Auth(){
 
                 {logReg && (
                     <form onSubmit={handleRegister}>
+
+                        {successMsg && (
+                            <div className="text-danger text-center mb-3">
+                                {successMsg}
+                            </div>
+                        )}
+
                         <div className='row'>
                             <label>Email</label>
                             <input 
