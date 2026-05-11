@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
- import { supabase } from "../../lib/supabase";
+import { supabase } from "../../lib/supabase";
 export default function Auth(){
 
     const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ export default function Auth(){
 
                 // 🔥 access token (IMPORTANT)
                 const token = data.session.access_token;
-                console.log("Access Token:", token);
+                //console.log("Access Token:", token);
             }
         }
         catch(err){
@@ -51,7 +51,7 @@ export default function Auth(){
                 console.log("Register Success:", data);
 
                 const token = data.session?.access_token;
-                console.log("Access Token:", token);
+                //console.log("Access Token:", token);
             }
         }
         catch(err){
