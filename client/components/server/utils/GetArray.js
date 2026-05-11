@@ -1,7 +1,8 @@
 
 export default async function GetArray(name, size=10){
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${baseUrl}/api/array?type=${name}&size=${size}`,
+    const basePort = process.env.NEXT_PUBLIC_API_URL;
+    console.log(`the base url ${basePort}`);
+    const res = await fetch(`http://localhost:${basePort}/api/array?type=${name}&size=${size}`,
         {
         method: "GET",
         }
