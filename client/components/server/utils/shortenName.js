@@ -6,8 +6,8 @@ export default function shortenName(name){
     switch(name){
         case "Quicksort (right pivot)": 
             return "quick_right";
-        case "Quicksort (left pivot)": 
-            return "quick_left";
+        case "Quicksort (random pivot)": 
+            return "quick_random";
         case "Bubble sort":
             return "bubble";
         case "Bubble sort(optimized)":
