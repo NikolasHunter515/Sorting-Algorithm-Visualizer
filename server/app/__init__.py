@@ -14,4 +14,5 @@ def create_app():
     from .routes.algorithmAPI import array_bp
     app.register_blueprint(array_bp)
 
+
     return app
