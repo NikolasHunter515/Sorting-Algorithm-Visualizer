@@ -1,67 +1,117 @@
+import json
+
 def bubble_sort(arr):
+    steps = {"steps": []}
     n = len(arr)
     for i in range(n):
         for j in range(n - i - 1):
+            steps["steps"].append({"type": "highlight", "indices": [j]})
             if arr[j] > arr[j + 1]:
+                steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def selection_sort(arr):
+    steps = {"steps": []}
     n = len(arr)
     for i in range(n):
         minIndex = i
         for j in range(i + 1, n):
+            steps["steps"].append({"type": "highlight", "indices": [j]})
             if arr[minIndex] > arr[j]:
                 minIndex = j
 
         if i != minIndex:
+            steps["steps"].append({"type": "swap", "indices": [i, minIndex]})
             arr[i], arr[minIndex] = arr[minIndex], arr[i]
 
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def insertion_sort(arr):
+    steps = {"steps": []}
     n = len(arr)
     for i in range(1, n):
         key = arr[i]
         j = i - 1
         while j >= 0 and arr[j] > key:
+            steps["steps"].append({"type": "highlight", "indices": [j]})
+            steps["steps"].append({"type": "swap", "indices": [j, j + 1]})
             arr[j + 1] = arr[j]
             j -= 1
         arr[j + 1] = key
     
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def merge_sort(arr):
-    n = len(arr)
-    size = 1
+    steps = {"steps": []}
 
-    while size < n:
-        for start in range(0, n, size * 2):
-            mid = min(start + size, n)
-            end = min(start + size * 2, n)
-            left = arr[start:mid]
-            right = arr[mid:end]
-            merged = []
-            i = j = 0
+    def merge_sort_recursive(left, right):
+        if right - left <= 1:
+            return
 
-            while i < len(left) and j < len(right):
-                if left[i] <= right[j]:
-                    merged.append(left[i])
-                    i += 1
-                else:
-                    merged.append(right[j])
-                    j += 1
+        mid = (left + right) // 2
 
-            merged.extend(left[i:])
-            merged.extend(right[j:])
-            arr[start:start + len(merged)] = merged
+        steps["steps"].append({
+            "type": "highlight",
+            "indices": list(range(left, mid))
+        })
 
-        size *= 2
+        merge_sort_recursive(left, mid)
 
-    return arr
+        steps["steps"].append({
+            "type": "highlight",
+            "indices": list(range(mid, right))
+        })
+
+        merge_sort_recursive(mid, right)
+
+        merge(left, mid, right)
+
+    def merge(left, mid, right):
+        temp = []
+        i, j = left, mid
+
+        while i < mid and j < right:
+            if arr[i] <= arr[j]:
+                temp.append(arr[i])
+                i += 1
+            else:
+                temp.append(arr[j])
+                j += 1
+
+        while i < mid:
+            temp.append(arr[i])
+            i += 1
+
+        while j < right:
+            temp.append(arr[j])
+            j += 1
+
+        for k in range(len(temp)):
+            steps["steps"].append({
+                "type": "highlight",
+                "indices": [left + k]
+            })
+
+            arr[left + k] = temp[k]
+
+            steps["steps"].append({
+                "type": "replace",
+                "index": left + k,
+                "value": temp[k]
+            })
+
+    merge_sort_recursive(0, len(arr))
+
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def quick_sort(arr):
+    steps = {"steps": []}
     stack = [(0, len(arr) - 1)]
 
     while stack:
@@ -71,22 +121,41 @@ def quick_sort(arr):
             i = low - 1
 
             for j in range(low, high):
+                steps["steps"].append({
+                "type": "highlight",
+                "indices": [high, j]
+                })
                 if arr[j] <= pivot:
                     i += 1
-                    arr[i], arr[j] = arr[j], arr[i]
+                    if i != j:
+                        steps["steps"].append({
+                        "type": "swap",
+                        "indices": [i, j]
+                        })
+                        arr[i], arr[j] = arr[j], arr[i]
 
+            steps["steps"].append({
+            "type": "swap",
+            "indices": [i + 1, high]
+            })
             arr[i + 1], arr[high] = arr[high], arr[i + 1]
             pivot_idx = i + 1
 
             stack.append((low, pivot_idx - 1))
             stack.append((pivot_idx + 1, high))
 
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def heap_sort(arr):
+    steps = {"steps": []}
     n = len(arr)
 
     for i in range(n // 2 - 1, -1, -1):
+        steps["steps"].append({
+        "type": "highlight",
+        "indices": [i]
+        })
         while True:
             largest = i
             left = 2 * i + 1
@@ -99,11 +168,23 @@ def heap_sort(arr):
 
             if largest == i:
                 break
-
+            
+            steps["steps"].append({
+            "type": "swap",
+            "indices": [i, largest]
+            })
             arr[i], arr[largest] = arr[largest], arr[i]
             i = largest
 
     for i in range(n - 1, 0, -1):
+        steps["steps"].append({
+        "type": "highlight",
+        "indices": [i]
+        })
+        steps["steps"].append({
+        "type": "swap",
+        "indices": [0, i]
+        })
         arr[0], arr[i] = arr[i], arr[0]
         root = 0
         while True:
@@ -119,12 +200,18 @@ def heap_sort(arr):
             if largest == root:
                 break
 
+            steps["steps"].append({
+            "type": "swap",
+            "indices": [root, largest]
+            })
             arr[root], arr[largest] = arr[largest], arr[root]
             root = largest
 
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)
 
 def cocktail_sort(arr):
+    steps = {"steps": []}
     n = len(arr)
     swapped = True
     start = 0
@@ -134,7 +221,15 @@ def cocktail_sort(arr):
         swapped = False
 
         for i in range(start, end):
+            steps["steps"].append({
+            "type": "highlight",
+            "indices": [i]
+            })
             if arr[i] > arr[i + 1]:
+                steps["steps"].append({
+                "type": "swap",
+                "indices": [i, i + 1]
+                })
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
 
@@ -145,10 +240,19 @@ def cocktail_sort(arr):
         swapped = False
 
         for i in range(end - 1, start - 1, -1):
+            steps["steps"].append({
+            "type": "highlight",
+            "indices": [i]
+            })
             if arr[i] > arr[i + 1]:
+                steps["steps"].append({
+                "type": "swap",
+                "indices": [i, i + 1]
+                })
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
 
         start += 1
 
-    return arr
+    steps["steps"].append({"type": "stop"})
+    return json.dumps(steps)

@@ -1,66 +1,119 @@
+'use client';
 import Image from "next/image";
-import styles from "./page.module.css";
+import Navbar from "../../components/server/client/navbar/Navbar";
+import ChartRender from "../../components/chart/ChartRender";
+import AlgoInfo from "../../components/description/AlgoInfo";
+import SelectAlgo from "../../components/server/client/algoSelection/SelectAlgo";
+import DisplayAlgoName from "../../components/server/client/algoTitle/DisplayAlgoName";
+import SelectCase from "../../components/server/client/runtimeSelection/SelectCase";
+import SetInputSize from "../../components/server/client/inputSize/SetInputSize";
+import Controls from "../../components/server/client/stepControls/Controls";
+import HistoryTab from "../../components/server/client/history/HistoryTab";
+import { useState, useEffect } from 'react';
+import GetArray from "../../components/server/utils/GetArray";
+import GetSteps from "../../components/server/utils/GetSteps";
+
 
 export default function Home() {
+  //const [arr, setArr] = useState([1,4,5,6]);
+  const arr = [1,4,5,6];
+  const [algoName, setAlgoName] = useState("Quicksort");
+  const [description, setDescription] = useState("Select an algorithm for a description");
+  const [inputSize, setInputSize] = useState(10); // max size should be 100 for now.
+  const [runtimeCase, setRuntimeCase] = useState("random"); // 1: sorted, 2: random, 3: reserse sorted
+  const [showSort, setShowSort] = useState(true);
+  const [play, setPlay] = useState(false);
+  const [chartData, setChartData] = useState([]);
+  const [steps, setSteps] = useState([]);
+
+  //does handle change, except when random is clicked ideally it should generate again.
+  useEffect (() => { // when this is changed the new array should also be sent to the backend.
+    const fetchData = async () => {
+      const data = await GetArray(runtimeCase, inputSize);
+      console.log(data);
+      setChartData(data);// should only update if inputsize has changed and is not null.
+
+      //when calling consider putting in try block to display error to user.
+      //should the user see the error or since they have no control over what is sent they cannot make any changes.
+      //await GetSteps("Bubble sort");// works here need to test in play controls next.
+    };
+    fetchData();
+  }, [inputSize, runtimeCase]);// is a or condition here, meaning would need to put code in an if statement to have finer control over when it executes.
+
+  /*useEffect(() => {
+    const step = steps[0];
+    console.log(`got steps: ${step}`);
+  }, [steps]);*/
+
+  //appears that only the uv value matters meaning will use that to display the data
+  const dta = [
+  {
+    uv: 1,
+    
+  },
+  {
+    uv: 3,
+    
+  },
+  {
+    uv: 2,
+   
+  },
+  {
+    uv: 2,
+    fill: "#1F77b4",
+  },
+  {
+    uv: 4,
+  },
+  {
+    uv: 3,
+  },
+  {
+    uv: 4,
+  },
+];
+
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="page">
+      <Navbar homePage={true}/>
+      homepage
+
+      <div className="row justify-content-center gx-10">
+        <div className="col-auto">
+          <DisplayAlgoName name={algoName}/>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="col-auto">
+          <SelectAlgo setAlgoName={setAlgoName}/>
         </div>
-      </main>
+      </div>
+
+      <div className="row justify-content-center">
+        <div className="col-1">
+          <HistoryTab />
+          </div>
+        <div className="col-5">
+          <ChartRender data={chartData}/>
+          <div className="col">
+            <SelectCase setRuntimeCase={setRuntimeCase} setShowSort={setShowSort} inputSize={inputSize} setChartData={setChartData}/>
+          </div>
+          <div className="col">
+              <div className="row">
+                <div className="col">
+                  <SetInputSize inputSize={inputSize} setInputSize={setInputSize} />
+                </div>
+                <div className="col">
+                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName}/>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      jhfsjkdfh
+      <AlgoInfo />
+      <p>{runtimeCase} + {inputSize}</p>
     </div>
   );
 }

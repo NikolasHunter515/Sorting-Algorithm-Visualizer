@@ -1,0 +1,35 @@
+.auth-content{
+    padding-top: 65px;
+}
+
+.auth-footer{
+    padding-top: 86px;
+}
+
+.center-content{
+    font-family:Arial, Helvetica, sans-serif;
+    background-color: var(--millia);
+    box-shadow: rgba(0, 0, 0, 0.35) -10px 10px 15px;
+    height: 500px;
+    border-radius: 50px !important;
+}
+
+input.form-control.input-background{
+    background-color: var(--third-color);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 5px inset;
+}
+
+.submit-info{
+    background-color: var(--secondary-color) !important;
+    color:black;
+    border:none;
+    box-shadow: rgba(0, 0, 0, 0.35) -2px 4px 5px;
+}
+
+.control-head{
+    height: 150px;
+}
+
+footer{
+    background-color: var(--millia);
+}
