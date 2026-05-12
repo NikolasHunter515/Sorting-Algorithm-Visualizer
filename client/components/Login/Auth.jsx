@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 export default function Auth(){
     const router = useRouter();
@@ -32,6 +33,7 @@ export default function Auth(){
 
                 // 🔥 access token (IMPORTANT)
                 const token = data.session.access_token;
+                router.push("/");
                 //console.log("Access Token:", token);
             }
         }
@@ -57,6 +59,7 @@ export default function Auth(){
                 console.log("Register Success:", data);
                 setsuccessMsg("Registration successful")
                 const token = data.session?.access_token;
+                log();
                 //console.log("Access Token:", token);
             }
         }
