@@ -29,6 +29,7 @@ export default function Home() {
   const [steps, setSteps] = useState([]);
   const [finishedFlag, setFinishedFlag] = useState(false);
   const [speed, setSpeed] = useState(500);
+  const [original, setOriginal] = useState([]);
   //localStorage.setItem("highlightQueue", []);
 
   //does handle change, except when random is clicked ideally it should generate again.
@@ -37,6 +38,7 @@ export default function Home() {
       const data = await GetArray(runtimeCase, inputSize);
       console.log(data);
       setChartData(data);// should only update if inputsize has changed and is not null.
+      setOriginal(data);
 
       //when calling consider putting in try block to display error to user.
       //should the user see the error or since they have no control over what is sent they cannot make any changes.
@@ -122,7 +124,7 @@ export default function Home() {
                   <SetInputSize inputSize={inputSize} setInputSize={setInputSize} />
                 </div>
                 <div className="col">
-                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName} runtime={runtimeCase} size={inputSize} speed={speed}/>
+                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName} runtime={runtimeCase} original={original} speed={speed}/>
                 </div>
               </div>
           </div>

@@ -5,7 +5,7 @@ import GetSteps from "../../utils/GetSteps";
 import handleSteps from "../../utils/handleSteps";
 import GetArray from "../../utils/GetArray";
 
-export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, size, speed}){
+export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, original, speed}){
     //should send a request to backend to start soring, will recieve the steps then store in data.
     //will update the play toggle after recieving the data
     //need to think of way to keep track of when we should request data or just control the animation.
@@ -19,6 +19,8 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     const [finished, setFinished] = useState(false);
     //make a finished flag outside if it changes it will get a new array outside of this.
 
+    //console.log("Starting to render");
+
     function pause(){
         if(play){
             setPlay(false);
@@ -28,14 +30,18 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
 
     function resume(){
         if(!play){
+            if(!started){
+                //setOriginal([...chartData]);
+            }
+
             setPlay(true);
             console.log("Resuming");
             if(!started){
                 setStarted(true);
             }
-            /*if(finished){
-                setChartData(tempData);
-            }*/
+            if(finished){
+                setChartData([...original]);
+            }
 
         }
     }
@@ -44,24 +50,26 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     useEffect(() => {
         if(started){
             if(finished){
-            const fetchData = async () => {
+            /*const fetchData = async () => {
                 // get new array
                 const nuAlgo = await GetArray(runtime, size);
 
                 //get new steps
-                const algoSteps = await GetSteps(algoName, nuAlgo);
+                const algoSteps = await GetSteps(algoName, orginal);
                 setSteps(algoSteps.steps);
             };
-            fetchData();
+            fetchData();*/
         }
             //fetch the steps
             const fetchData = async () => {
                 if(finished){
-                    const nuAlgo = await GetArray(runtime, size);
+                    //this one line of code contributes nothing but, solves the run once issue.
+                    //const size = steps.length();
+                    //const nuAlgo = await GetArray(runtime, size);
                     console.log("Running again getting new array");
                     
                 }
-                const algoSteps = await GetSteps(algoName, chartData);
+                const algoSteps = await GetSteps(algoName, [...original]);
                 setSteps(algoSteps.steps);// works here need to test in play controls next.
                 //console.log(algoSteps.steps)
                 setStepSize(algoSteps.steps.length);
@@ -80,34 +88,35 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
     //console.log(steps[0]);
     //read steps
     useEffect(() => {
-        if(stepSize === 0) return;
+    if (!play || stepSize === 0) return;
 
-        if(play){//issue only runs once as the original array is tampered with and the indexing is messed up.
-            setTimeout(() => {
-                setCount((count) => count + 1);
-                console.log(steps[count]);
-                //console.log(steps[count].indices);
+    if (count >= stepSize) {
+        setPlay(false);
+        setStarted(false);
+        setFinished(true);
+        setCount(0);
+        return;
+    }
 
-                const updated = handleSteps(steps[count], chartData);
-                if(updated != null){
-                    setChartData(updated);
-                }
-                else{
-                    setCount((count) => count = 0);
-                }
-                
+    const timer = setTimeout(() => {
 
-                }, speed);//use 250 as default, also should be passed as a parameter
-            if(count >= stepSize - 1 || count < 0){
-                //count stops after reaching value + 1
-                setPlay(false);
-                setStarted(false);
-                setFinished(true);
-                setCount(0);
-            }
+        const currentStep = steps[count];
+
+        console.log(currentStep);
+
+        const updated = handleSteps(currentStep, [...chartData]);
+
+        if (updated) {
+            setChartData(updated);
         }
 
-    }, [play, count, steps]);
+        setCount(prev => prev + 1);
+
+    }, speed);
+
+    return () => clearTimeout(timer);
+
+}, [play, count, stepSize, steps, speed]);
 
     //TODO write method to get steps from backend if not clicked
     //TODO write use effect to test pause play with auto reload if completed.
