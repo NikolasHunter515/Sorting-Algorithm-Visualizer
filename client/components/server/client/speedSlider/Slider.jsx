@@ -8,7 +8,6 @@ export default function Slide({speed, setSpeed}){
     console.log(speed);
     return(
         <div className="slidecontainer">
-            <Tips />
             <input type="range" min="50" max="1000" value={speed} className="slider" onChange={(e) => setSpeed(e.target.value)}/>
         </div>
     );

@@ -13,6 +13,7 @@ import Slider from "../../components/server/client/speedSlider/Slider";
 import { useState, useEffect } from 'react';
 import GetArray from "../../components/server/utils/GetArray";
 import GetSteps from "../../components/server/utils/GetSteps";
+import Tips from "../../components/server/client/tipPopup/Tips";
 import "../app/home.css";
 
 
@@ -111,7 +112,10 @@ export default function Home() {
       <div className="row justify-content-center">
         <div className="col-1" id="histPlace">
           <HistoryTab />
+          <div id="harryPlace">
+            <Tips />
           </div>
+        </div>
         <div className="col-5" id="chartPlace">
           <ChartRender data={chartData}/>
           <Slider speed={speed} setSpeed={setSpeed}/>
