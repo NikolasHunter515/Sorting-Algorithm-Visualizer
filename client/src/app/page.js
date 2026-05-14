@@ -9,16 +9,18 @@ import SelectCase from "../../components/server/client/runtimeSelection/SelectCa
 import SetInputSize from "../../components/server/client/inputSize/SetInputSize";
 import Controls from "../../components/server/client/stepControls/Controls";
 import HistoryTab from "../../components/server/client/history/HistoryTab";
+import Slider from "../../components/server/client/speedSlider/Slider";
 import { useState, useEffect } from 'react';
 import GetArray from "../../components/server/utils/GetArray";
 import GetSteps from "../../components/server/utils/GetSteps";
+import Tips from "../../components/server/client/tipPopup/Tips";
 import "../app/home.css";
 
 
 export default function Home() {
   //const [arr, setArr] = useState([1,4,5,6]);
   const arr = [1,4,5,6];
-  const [algoName, setAlgoName] = useState("Quicksort");
+  const [algoName, setAlgoName] = useState("Bubble sort");
   const [description, setDescription] = useState("Select an algorithm for a description");
   const [inputSize, setInputSize] = useState(10); // max size should be 100 for now.
   const [runtimeCase, setRuntimeCase] = useState("random"); // 1: sorted, 2: random, 3: reserse sorted
@@ -26,6 +28,9 @@ export default function Home() {
   const [play, setPlay] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [steps, setSteps] = useState([]);
+  const [finishedFlag, setFinishedFlag] = useState(false);
+  const [speed, setSpeed] = useState(500);
+  const [original, setOriginal] = useState([]);
   //localStorage.setItem("highlightQueue", []);
 
   //does handle change, except when random is clicked ideally it should generate again.
@@ -34,6 +39,7 @@ export default function Home() {
       const data = await GetArray(runtimeCase, inputSize);
       console.log(data);
       setChartData(data);// should only update if inputsize has changed and is not null.
+      setOriginal(data);
 
       //when calling consider putting in try block to display error to user.
       //should the user see the error or since they have no control over what is sent they cannot make any changes.
@@ -43,6 +49,18 @@ export default function Home() {
     localStorage.setItem("highlightQueue", []) || [];
   }, [inputSize, runtimeCase]);// is a or condition here, meaning would need to put code in an if statement to have finer control over when it executes.
 
+  //ignore for now broken
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await GetArray(runtimeCase, inputSize);
+      console.log(`Finished fetch: ${data}`);
+      setChartData(data);
+    };
+    if(finishedFlag){
+      fetchData();
+    }
+    
+  }, [finishedFlag]);
   /*useEffect(() => {
     const step = steps[0];
     console.log(`got steps: ${step}`);
@@ -94,9 +112,13 @@ export default function Home() {
       <div className="row justify-content-center">
         <div className="col-1" id="histPlace">
           <HistoryTab />
+          <div id="harryPlace">
+            <Tips />
           </div>
+        </div>
         <div className="col-5" id="chartPlace">
           <ChartRender data={chartData}/>
+          <Slider speed={speed} setSpeed={setSpeed}/>
           <div className="col d-flex justify-content-center" id="runtimePlace">
             <SelectCase setRuntimeCase={setRuntimeCase} setShowSort={setShowSort} inputSize={inputSize} setChartData={setChartData}/>
           </div>
@@ -106,7 +128,7 @@ export default function Home() {
                   <SetInputSize inputSize={inputSize} setInputSize={setInputSize} />
                 </div>
                 <div className="col">
-                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName}/>
+                  <Controls play={play} setPlay={setPlay} chartData={chartData} setChartData={setChartData} setSteps={setSteps} steps={steps} algoName={algoName} runtime={runtimeCase} original={original} speed={speed}/>
                 </div>
               </div>
           </div>

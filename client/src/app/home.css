@@ -99,3 +99,59 @@
     padding-top: 25px;
     height: 100%;
 }
+
+.slidecontainer{
+    width: 300px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #ffffff; /* track color */
+  outline: none;
+}
+
+/* Chrome, Safari, Edge */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4c98af; /* thumb color */
+  cursor: pointer;
+  outline-color: #ffffff !important;
+  outline-width: 5px;
+}
+
+/* Firefox */
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #525252;
+  cursor: pointer;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1;
+}
+
+.custom-tooltip .tooltip-inner {
+  background-image: url("https://imgs.search.brave.com/m9Jgdy3peJ4L_IdwY0fmeUEIw0DyAtZvMbuP5itbK-k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jbGlw/YXJ0LWxpYnJhcnku/Y29tL2ltYWdlc19r/L3RyYW5zcGFyZW50/LXNwZWVjaC1idWJi/bGVzL3RyYW5zcGFy/ZW50LXNwZWVjaC1i/dWJibGVzLTIuanBn");
+  background-size: cover;
+  background-position: center;
+  height: 250px;
+  width: 500px;
+
+  color: rgb(0, 0, 0);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+#harryPlace{
+    padding-top: 20px;
+}
