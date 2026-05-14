@@ -6,7 +6,7 @@ export default function Auth(){
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [logReg, setLogReg] = useState(false);
+    const [logReg, setLogReg] = useState(false); // false -> login, true register
     const [errorMsg, seterrorMsg] = useState("");
     const [successMsg, setsuccessMsg] = useState("");
 
@@ -92,8 +92,10 @@ export default function Auth(){
                             <input 
                                 type='email'
                                 value={email}
+                                id='uName'
+                                placeholder='Enter email'
                                 onChange={(e) => setEmail(e.target.value)}
-                                className='form-control'
+                                className='form-control input-background'
                                 required
                             />
                         </div>
@@ -102,35 +104,37 @@ export default function Auth(){
                             <label>Password</label>
                             <input 
                                 type='password'
-                                value={password}   // ✅ added
+                                value={password}
+                                id='pw'
+                                placeholder='Enter password'
                                 onChange={(e) => setPassword(e.target.value)}
-                                className='form-control'
+                                className='form-control input-background'
                                 required
                             />
                         </div>
 
                         <div className='text-center mt-3'>
-                            <button type='submit' className='btn'>Login</button>
+                            <button type='submit' className='btn rounded-pill submit-info'>Login</button>
                         </div>
                     </form>
                 )}
 
                 {logReg && (
                     <form onSubmit={handleRegister}>
-
                         {successMsg && (
                             <div className="text-danger text-center mb-3">
                                 {successMsg}
                             </div>
                         )}
-
                         <div className='row'>
-                            <label>Email</label>
+                            <label className='form-label'>Email</label>
                             <input 
                                 type='email'
+                                id='uName'
                                 value={email}
+                                placeholder='Enter email'
                                 onChange={(e) => setEmail(e.target.value)}
-                                className='form-control'
+                                className='form-control input-background'
                                 required
                             />
                         </div>
@@ -139,15 +143,17 @@ export default function Auth(){
                             <label>Password</label>
                             <input 
                                 type='password'
-                                value={password}   // ✅ added
+                                value={password} 
+                                id='pw'
+                                placeholder='Enter password'
                                 onChange={(e) => setPassword(e.target.value)}
-                                className='form-control'
+                                className='form-control input-background'
                                 required
                             />
                         </div>
 
                         <div className='text-center mt-3'>
-                            <button type='submit' className='btn'>Register</button>
+                            <button type='submit' className='btn rounded-pill submit-info'>Register</button>
                         </div>
                     </form>
                 )}
