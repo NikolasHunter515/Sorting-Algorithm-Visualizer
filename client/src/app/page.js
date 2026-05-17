@@ -36,10 +36,12 @@ export default function Home() {
   //does handle change, except when random is clicked ideally it should generate again.
   useEffect (() => { // when this is changed the new array should also be sent to the backend.
     const fetchData = async () => {
-      const data = await GetArray(runtimeCase, inputSize);
-      console.log(data);
-      setChartData(data);// should only update if inputsize has changed and is not null.
-      setOriginal(data);
+      if(inputSize >= 10 && inputSize <= 200){
+        const data = await GetArray(runtimeCase, inputSize);
+        console.log(data);
+        setChartData(data);// should only update if inputsize has changed and is not null.
+        setOriginal(data);
+      }
 
       //when calling consider putting in try block to display error to user.
       //should the user see the error or since they have no control over what is sent they cannot make any changes.

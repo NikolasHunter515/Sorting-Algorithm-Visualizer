@@ -21,8 +21,10 @@ export default function SetInputSize({ inputSize, setInputSize }) {
                 type="number"
                 placeholder="N: "
                 value={inputSize || ''}
-                onChange={(e) => validInput(e.target.value)}
+                onChange={(e) => setInputSize(e.target.value)}
                 id='inputSize'
+                min={10}
+                max={200}
             />
         </div>
     );
