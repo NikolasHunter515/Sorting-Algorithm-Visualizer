@@ -14,7 +14,7 @@ export default function Login(){
 
             <div className="auth-footer">
                 <footer>
-                    I am the foot
+                    
                 </footer>
             </div>
         </div>
