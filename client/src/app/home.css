@@ -166,3 +166,8 @@
 #harryPlace{
     padding-top: 20px;
 }
+
+.foot{
+    background-color: var(--millia);
+    padding-top: 26px;
+}
