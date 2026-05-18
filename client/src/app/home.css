@@ -152,9 +152,9 @@
 }
 
 .custom-tooltip .tooltip-inner {
-  background-image: url("https://imgs.search.brave.com/m9Jgdy3peJ4L_IdwY0fmeUEIw0DyAtZvMbuP5itbK-k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jbGlw/YXJ0LWxpYnJhcnku/Y29tL2ltYWdlc19r/L3RyYW5zcGFyZW50/LXNwZWVjaC1idWJi/bGVzL3RyYW5zcGFy/ZW50LXNwZWVjaC1i/dWJibGVzLTIuanBn");
   background-size: cover;
   background-position: center;
+  background-color: var(--millia);
   height: 250px;
   width: 500px;
 
