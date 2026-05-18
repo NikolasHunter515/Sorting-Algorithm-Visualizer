@@ -138,8 +138,11 @@ export default function Home() {
       </div>
 
       <div id="desPlace">
-        <AlgoInfo />
-        <p>{runtimeCase} + {inputSize}</p>
+        <div id="desBtn">
+          <AlgoInfo />
+        </div>
+        <div id="desBottomFill">
+        </div>
       </div>
     </div>
   );
