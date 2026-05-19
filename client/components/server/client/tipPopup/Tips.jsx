@@ -1,20 +1,57 @@
 'use client';
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef, useState } from 'react';
+import GetAlgoInfo from '../../utils/GetAlgoInfo';
 
-export default function Tips(){
+const CASE_LABELS = {
+    sorted: { label: "Best case", field: "best_case" },
+    random: { label: "Average case", field: "average_case" },
+    reverse: { label: "Worst case", field: "worst_case" },
+};
+
+export default function Tips({ algoName, runtimeCase }){
     const tooltipRef = useRef(null);
-    //TODO get runtime from description returned in the db.
+    const tooltipInstance = useRef(null);
+    const [info, setInfo] = useState(null);
 
     useEffect(() => {
-    new bootstrap.Tooltip(tooltipRef.current, {
-      customClass: "custom-tooltip",
-      html: true,
-        title: `<div class="tooltip-content" data-bs-placement="right">
-                <h3>Harry the Hippo Says:</h3>
-                <p>The run time for this is: O(N)</p>
-                </div>`
-    });
-  }, []);
+        if(!algoName) return;
+        let cancelled = false;
+
+        GetAlgoInfo(algoName).then(data => {
+            if(!cancelled) setInfo(data);
+        });
+
+        return () => { cancelled = true; };
+    }, [algoName]);
+
+    useEffect(() => {
+        if(!tooltipRef.current || typeof bootstrap === "undefined") return;
+
+        const caseInfo = CASE_LABELS[runtimeCase] || CASE_LABELS.random;
+        const runtime = info?.[caseInfo.field] || "unknown";
+
+        const title = `<div class="tooltip-content">
+            <h3>Harry the Hippo Says:</h3>
+            <p>${algoName || "This algorithm"} — ${caseInfo.label}: ${runtime}</p>
+        </div>`;
+
+        if(tooltipInstance.current){
+            tooltipInstance.current.dispose();
+        }
+
+        tooltipInstance.current = new bootstrap.Tooltip(tooltipRef.current, {
+            customClass: "custom-tooltip",
+            html: true,
+            title,
+        });
+
+        return () => {
+            if(tooltipInstance.current){
+                tooltipInstance.current.dispose();
+                tooltipInstance.current = null;
+            }
+        };
+    }, [info, runtimeCase, algoName]);
 
     return (
         <div>
