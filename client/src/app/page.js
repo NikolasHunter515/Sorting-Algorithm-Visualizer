@@ -140,7 +140,7 @@ export default function Home() {
 
       <div id="desPlace">
         <div id="desBtn">
-          <AlgoInfo />
+          <AlgoInfo algoName={algoName}/>
         </div>
         <div id="desBottomFill">
         </div>
