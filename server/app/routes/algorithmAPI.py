@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from logic.algorithms import *
 from logic.arrayGenerator import *
+from app.db.queries import get_algo_info, get_all_algos, get_run_history
  
 # global array variable that will then be sorted
 # loads one upon entering homepage
@@ -63,6 +64,28 @@ def get_algorithm():
     #     return algorithm(CURRENT_ARRAY)
     # else:
     #     return jsonify({"Error": "must generate array first"})
+
+@algorithm_bp.route("/api/algorithm/info", methods=["GET"])
+def algorithm_info():
+    name = request.args.get("name")
+    if not name:
+        return jsonify({"error": "name parameter is required"}), 400
+
+    data = get_algo_info(name)
+    if not data:
+        return jsonify({"error": f"Algorithm '{name}' not found"}), 404
+
+    return jsonify(data), 200
+
+@algorithm_bp.route("/api/algorithm/all", methods=["GET"])
+def algorithm_all():
+    return jsonify(get_all_algos()), 200
+
+@algorithm_bp.route("/api/algorithm/history", methods=["GET"])
+def algorithm_history():
+    user_id = request.args.get("user_id")
+    limit = request.args.get("limit", default=50, type=int)
+    return jsonify(get_run_history(user_id=user_id, limit=limit)), 200
 
 @array_bp.route("/api/array", methods=["GET"])
 def get_array():

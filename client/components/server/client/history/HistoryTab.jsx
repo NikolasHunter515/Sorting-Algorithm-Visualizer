@@ -1,8 +1,18 @@
 'use client';
 
+import { useState } from "react";
+import GetHistory from "../../utils/GetHistory";
+
 export default function HistoryTab(){
-    //will have its own server counter part that gets the users runtime hist from the database.
-    //or will just call a route on the backend that performs a query.
+    const [runs, setRuns] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const loadHistory = async () => {
+        setLoading(true);
+        const data = await GetHistory();
+        setRuns(data);
+        setLoading(false);
+    };
 
     return(
         <div>
@@ -12,13 +22,36 @@ export default function HistoryTab(){
                     <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div className="offcanvas-body">
-                    <p>Algo name:   Case:   Time:</p>
+                    {loading && <p>Loading...</p>}
+
+                    {!loading && runs.length === 0 && (
+                        <p>No runs yet.</p>
+                    )}
+
+                    {!loading && runs.length > 0 && (
+                        <ul className="list-unstyled">
+                            {runs.map(run => (
+                                <li key={run.id} style={{ marginBottom: "0.75rem" }}>
+                                    <div><strong>{run.algorithms?.name || "Unknown"}</strong></div>
+                                    <div>Case: {run.array_state}</div>
+                                    <div>Time: {run.execution_time}s</div>
+                                    <small>{new Date(run.created_at).toLocaleString()}</small>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
 
-
-            <button className="btn" id="hist-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#hist">
-            History
+            <button
+                className="btn"
+                id="hist-btn"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#hist"
+                onClick={loadHistory}
+            >
+                History
             </button>
         </div>
     );

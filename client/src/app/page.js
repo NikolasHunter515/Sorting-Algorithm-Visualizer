@@ -113,7 +113,7 @@ export default function Home() {
         <div className="col-1" id="histPlace">
           <HistoryTab />
           <div id="harryPlace">
-            <Tips />
+            <Tips algoName={algoName} runtimeCase={runtimeCase}/>
           </div>
         </div>
         <div className="col-5" id="chartPlace">
@@ -136,7 +136,7 @@ export default function Home() {
       </div>
 
       <div id="desPlace">
-        <AlgoInfo />
+        <AlgoInfo algoName={algoName}/>
         <p>{runtimeCase} + {inputSize}</p>
       </div>
     </div>
