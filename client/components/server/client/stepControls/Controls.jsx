@@ -5,21 +5,13 @@ import GetSteps from "../../utils/GetSteps";
 import handleSteps from "../../utils/handleSteps";
 import GetArray from "../../utils/GetArray";
 
-export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, original, speed}){
-    //should send a request to backend to start soring, will recieve the steps then store in data.
-    //will update the play toggle after recieving the data
-    //need to think of way to keep track of when we should request data or just control the animation.
-    //will be one of the more complex components.
+export default function Controls({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, original, speed}){
     const [started, setStarted] = useState(false);
     const [count, setCount] = useState(0);
     const [stepSize, setStepSize] = useState(0);
-    const [highlightQueue, setHighlightQueue] = useState([]);//put the queue in localstorage
-    const [btnSize] = useState(5);
+    const [highlightQueue, setHighlightQueue] = useState([]);
     const [tempData, setTempData] = useState(chartData);
     const [finished, setFinished] = useState(false);
-    //make a finished flag outside if it changes it will get a new array outside of this.
-
-    //console.log("Starting to render");
 
     function pause(){
         if(play){
@@ -30,10 +22,6 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
 
     function resume(){
         if(!play){
-            if(!started){
-                //setOriginal([...chartData]);
-            }
-
             setPlay(true);
             console.log("Resuming");
             if(!started){
@@ -42,94 +30,97 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
             if(finished){
                 setChartData([...original]);
             }
-
         }
     }
 
-    //fetch steps from backend
+    // Fetch steps from backend
     useEffect(() => {
-        if(started){
-            if(finished){
-            /*const fetchData = async () => {
-                // get new array
-                const nuAlgo = await GetArray(runtime, size);
+        if(!started) return;
 
-                //get new steps
-                const algoSteps = await GetSteps(algoName, orginal);
-                setSteps(algoSteps.steps);
-            };
-            fetchData();*/
+        if(!original || original.length === 0){
+            console.warn("original data is not ready yet");
+            setPlay(false);
+            return;
         }
-            //fetch the steps
-            const fetchData = async () => {
-                if(finished){
-                    //this one line of code contributes nothing but, solves the run once issue.
-                    //const size = steps.length();
-                    //const nuAlgo = await GetArray(runtime, size);
-                    console.log("Running again getting new array");
-                    
-                }
+
+        if(!algoName){
+            console.warn("algoName is not defined");
+            setPlay(false);
+            return;
+        }
+
+        const fetchData = async () => {
+            try {
+                console.log("Fetching steps for:", algoName, "with data:", original);
+
                 const algoSteps = await GetSteps(algoName, [...original]);
-                setSteps(algoSteps.steps);// works here need to test in play controls next.
-                //console.log(algoSteps.steps)
+
+                console.log("algoSteps response:", algoSteps);
+
+                if(!algoSteps || !algoSteps.steps){
+                    console.error("Invalid response from GetSteps:", algoSteps);
+                    setPlay(false);
+                    return;
+                }
+
+                setSteps(algoSteps.steps);
                 setStepSize(algoSteps.steps.length);
                 setFinished(false);
-                };
-                fetchData();// works here need to test in play controls next.
-        }
+
+            } catch(err) {
+                console.error("Error fetching steps:", err);
+                setPlay(false);
+            }
+        };
+
+        fetchData();
+
     }, [started, finished]);
-//not sure this was needed to solve the unhighlighting problem
-    /*
+
+    // Read and apply steps
     useEffect(() => {
-        setHighlightQueue(localStorage.getItem("highlightQueue"));
-        console.log(highlightQueue);
-    }, []);*/
+        if(!play || stepSize === 0) return;
 
-    //console.log(steps[0]);
-    //read steps
-    useEffect(() => {
-    if (!play || stepSize === 0) return;
-
-    if (count >= stepSize) {
-        setPlay(false);
-        setStarted(false);
-        setFinished(true);
-        setCount(0);
-        return;
-    }
-
-    const timer = setTimeout(() => {
-
-        const currentStep = steps[count];
-
-        console.log(currentStep);
-
-        const updated = handleSteps(currentStep, [...chartData]);
-
-        if (updated) {
-            setChartData(updated);
+        if(count >= stepSize){
+            setPlay(false);
+            setStarted(false);
+            setFinished(true);
+            setCount(0);
+            return;
         }
 
-        setCount(prev => prev + 1);
+        const timer = setTimeout(() => {
+            const currentStep = steps[count];
 
-    }, speed);
+            if(!currentStep){
+                console.warn("No step found at index:", count);
+                return;
+            }
 
-    return () => clearTimeout(timer);
+            console.log("Current step:", currentStep);
 
-}, [play, count, stepSize, steps, speed]);
+            const updated = handleSteps(currentStep, [...chartData]);
 
-    //TODO write method to get steps from backend if not clicked
-    //TODO write use effect to test pause play with auto reload if completed.
-    //FIXME altering the master data, meaning need to make copy to alter.
+            if(updated){
+                setChartData(updated);
+            }
+
+            setCount(prev => prev + 1);
+
+        }, speed);
+
+        return () => clearTimeout(timer);
+
+    }, [play, count, stepSize, steps, speed]);
 
     return(
         <div>
             <div className="row">
                 <div className="col-auto" id="controlBox">
                     <button className="btn control-btn" onClick={() => resume()}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-play-fill" viewBox="0 0 16 16">
-                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-play-fill" viewBox="0 0 16 16">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                        </svg>
                     </button>
                     <button className="btn control-btn" onClick={() => pause()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-pause-fill" viewBox="0 0 16 16">
