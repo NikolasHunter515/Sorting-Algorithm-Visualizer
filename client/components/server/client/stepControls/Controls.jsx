@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import GetSteps from "../../utils/GetSteps";
 import handleSteps from "../../utils/handleSteps";
+import GetArray from "../../utils/GetArray";
 
-export default function({play, setPlay, chartData, setChartData, setSteps, steps, algoName}){
-    //should send a request to backend to start soring, will recieve the steps then store in data.
-    //will update the play toggle after recieving the data
-    //need to think of way to keep track of when we should request data or just control the animation.
-    //will be one of the more complex components.
+export default function Controls({play, setPlay, chartData, setChartData, setSteps, steps, algoName, runtime, original, speed}){
     const [started, setStarted] = useState(false);
     const [count, setCount] = useState(0);
     const [stepSize, setStepSize] = useState(0);
+    const [highlightQueue, setHighlightQueue] = useState([]);
+    const [tempData, setTempData] = useState(chartData);
+    const [finished, setFinished] = useState(false);
 
     function pause(){
         if(play){
@@ -27,67 +27,106 @@ export default function({play, setPlay, chartData, setChartData, setSteps, steps
             if(!started){
                 setStarted(true);
             }
-
+            if(finished){
+                setChartData([...original]);
+            }
         }
     }
 
-    //fetch steps from backend
+    // Fetch steps from backend
     useEffect(() => {
-        if(started){
-            //fetch the steps
-            const fetchData = async () => {
-                //todo replace with selected algo.
-                const algoSteps = await GetSteps(algoName);
-                setSteps(algoSteps.steps);// works here need to test in play controls next.
-                //console.log(algoSteps.steps)
+        if(!started) return;
+
+        if(!original || original.length === 0){
+            console.warn("original data is not ready yet");
+            setPlay(false);
+            return;
+        }
+
+        if(!algoName){
+            console.warn("algoName is not defined");
+            setPlay(false);
+            return;
+        }
+
+        const fetchData = async () => {
+            try {
+                console.log("Fetching steps for:", algoName, "with data:", original);
+
+                const algoSteps = await GetSteps(algoName, [...original]);
+
+                console.log("algoSteps response:", algoSteps);
+
+                if(!algoSteps || !algoSteps.steps){
+                    console.error("Invalid response from GetSteps:", algoSteps);
+                    setPlay(false);
+                    return;
+                }
+
+                setSteps(algoSteps.steps);
                 setStepSize(algoSteps.steps.length);
-                };
-                fetchData();// works here need to test in play controls next.
-        }
+                setFinished(false);
 
-    }, [started]);
-
-    //console.log(steps[0]);
-    //read steps
-    useEffect(() => {
-        if(stepSize === 0) return;
-
-        if(play){//issue only runs once as the original array is tampered with and the indexing is messed up.
-            setTimeout(() => {
-                setCount((count) => count + 1);
-                console.log(steps[count]);
-                //console.log(steps[count].indices);
-
-                const updated = handleSteps(steps[count], chartData);
-                if(updated != null){
-                    setChartData(updated);
-                }
-                else{
-                    setCount((count) => count = 0);
-                }
-                
-
-                }, 250);
-            if(count >= stepSize - 1 || count < 0){
-                //count stops after reaching value + 1
+            } catch(err) {
+                console.error("Error fetching steps:", err);
                 setPlay(false);
-                setStarted(false);
-                setCount(0);
             }
+        };
+
+        fetchData();
+
+    }, [started, finished]);
+
+    // Read and apply steps
+    useEffect(() => {
+        if(!play || stepSize === 0) return;
+
+        if(count >= stepSize){
+            setPlay(false);
+            setStarted(false);
+            setFinished(true);
+            setCount(0);
+            return;
         }
 
-    }, [play, count, steps]);
+        const timer = setTimeout(() => {
+            const currentStep = steps[count];
 
-    //TODO write method to get steps from backend if not clicked
-    //TODO write use effect to test pause play with auto reload if completed.
-    //FIXME altering the master data, meaning need to make copy to alter.
+            if(!currentStep){
+                console.warn("No step found at index:", count);
+                return;
+            }
+
+            console.log("Current step:", currentStep);
+
+            const updated = handleSteps(currentStep, [...chartData]);
+
+            if(updated){
+                setChartData(updated);
+            }
+
+            setCount(prev => prev + 1);
+
+        }, speed);
+
+        return () => clearTimeout(timer);
+
+    }, [play, count, stepSize, steps, speed]);
 
     return(
         <div>
             <div className="row">
-                <div className="col-auto">
-                    <button className="btn" onClick={() => resume()}>Play {count}</button>
-                    <button className="btn" onClick={() => pause()}>Pause</button>
+                <div className="col-auto" id="controlBox">
+                    <button className="btn control-btn" onClick={() => resume()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-play-fill" viewBox="0 0 16 16">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                        </svg>
+                    </button>
+                    <button className="btn control-btn" onClick={() => pause()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-pause-fill" viewBox="0 0 16 16">
+                            <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>

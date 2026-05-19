@@ -1,6 +1,7 @@
 import Navbar from "../../../components/server/client/navbar/Navbar";
 import Auth from "../../../components/Login/Auth";
 import "./auth.css";
+import Foot from "../../../components/footer/Foot";
 
 export default function Login(){
 
@@ -14,7 +15,7 @@ export default function Login(){
 
             <div className="auth-footer">
                 <footer>
-                    I am the foot
+                    <Foot />
                 </footer>
             </div>
         </div>
