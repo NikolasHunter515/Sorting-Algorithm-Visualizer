@@ -1,9 +1,17 @@
-.auth-content{
-    padding-top: 65px;
+.page{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.auth-footer{
-    padding-top: 86px;
+.auth-content {
+  flex: 1;
+  padding-top: 65px;
+}
+
+.auth-footer {
+  background-color: var(--millia);
+  padding-top: 26px;
 }
 
 .center-content{

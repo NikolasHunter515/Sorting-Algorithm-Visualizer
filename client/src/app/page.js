@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import GetArray from "../../components/server/utils/GetArray";
 import GetSteps from "../../components/server/utils/GetSteps";
 import Tips from "../../components/server/client/tipPopup/Tips";
+import Foot from "../../components/footer/Foot";
 import "../app/home.css";
 
 
@@ -138,8 +139,14 @@ export default function Home() {
       </div>
 
       <div id="desPlace">
-        <AlgoInfo algoName={algoName}/>
-        <p>{runtimeCase} + {inputSize}</p>
+        <div id="desBtn">
+          <AlgoInfo />
+        </div>
+        <div id="desBottomFill">
+        </div>
+        <div className="foot">
+          <Foot />
+        </div>
       </div>
     </div>
   );
