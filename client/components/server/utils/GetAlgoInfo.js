@@ -1,9 +1,9 @@
 export default async function GetAlgoInfo(name){
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+    const basePort = process.env.NEXT_PUBLIC_API_URL;
 
     try{
         const res = await fetch(
-            `${baseUrl}/api/algorithm/info?name=${encodeURIComponent(name)}`,
+            `http://localhost:${basePort}/api/algorithm/info?name=${encodeURIComponent(name)}`,
             { method: "GET" }
         );
 

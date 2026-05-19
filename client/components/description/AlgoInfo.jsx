@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GetAlgoInfo from "../server/utils/GetAlgoInfo";
+import shortenName from "../server/utils/shortenName";
 
 export default function AlgoInfo({ algoName }){
     const [info, setInfo] = useState(null);
@@ -13,7 +14,8 @@ export default function AlgoInfo({ algoName }){
         let cancelled = false;
         const fetchInfo = async () => {
             setLoading(true);
-            const data = await GetAlgoInfo(algoName);
+            const nuName = shortenName(algoName);
+            const data = await GetAlgoInfo(nuName);
             if(!cancelled){
                 setInfo(data);
                 setLoading(false);
